@@ -23,7 +23,7 @@ if (tsv_path) {
     input_samples = extract_fastq(tsv_file)
 }
 
-// input_samples = input_samples.dump(tag: "reads")
+input_samples = input_samples.dump(tag: "reads")
 
 process fastqc {
     echo true
@@ -42,7 +42,7 @@ process fastqc {
     """ 
 }
 
-process TRIMGALORE {
+process trim_galore {
     label 'process_high'
 
     tag "TRIM $meta.id"
@@ -111,7 +111,6 @@ process fix_trim{
     """
 }
 
-
 process fastq_to_bam {
     
     label 'process_high'
@@ -121,6 +120,9 @@ process fastq_to_bam {
     input:
     tuple val(meta), file(reads1), file(reads2), file(reads3)
     val(rstructure)
+
+    output:
+    tuple val(meta) file("*bam")
 
     script:
     """  
@@ -135,11 +137,41 @@ process fastq_to_bam {
     --library "test" \\
     --read-group-id ${meta.patient}-${meta.id}
     """
-    } 
+    }
+
+process mark_illumina_adapters {
+
+    tag "mark adapters ${meta.id}"
+
+    label 'process_high'
+
+    publishDir "$params.outdir/mark_illumina_adapters/${meta.patient}/${meta.id}", mode: params.publish_dir_mode,
+        saveAs: { filename ->
+                      if (filename.indexOf(".metrics") > 0) filename
+                      else null
+                }
+
+    input:
+    tuple val(meta), file(bam)
+
+    output:
+    tuple val(meta), file("*bam"), emit : bam
+    path "*_mark_adaptor.metrics", emit: mark_adaptor_log
+
+    script:
+    """
+    picard MarkIlluminaAdapters \\
+    MAX_RECORDS_IN_RAM=4000000 \\
+    INPUT=$bam \\
+    OUTPUT="${meta.id}_unaln_umi_marked.bam \\
+    M="${meta.patient}_${meta.id}"_mark_adaptor.metrics
+    """
+    }
 
 workflow {
     fastqc(input_samples)
-    TRIMGALORE(input_samples)
-    fix_trim(TRIMGALORE.out.reads)
+    trim_galore(input_samples)
+    fix_trim(trim_galore.out.reads)
     fastq_to_bam(fix_trim.out.reads, ch_read_structure)
+    //mark_illumina_adapters
 }
