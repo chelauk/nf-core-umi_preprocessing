@@ -96,7 +96,6 @@ process trim_galore {
 
 process fix_trim{
     tag "fix trim $meta.id"
-    echo true
 
     input:
     tuple val(meta), file(reads1), file(reads2), file(reads3)
@@ -112,17 +111,14 @@ process fix_trim{
 }
 
 process fastq_to_bam {
-    
-    label 'process_high'
-
-    tag "fastq to bam ${meta.id}"
+    tag "fastq to bam: ${meta.id}"
 
     input:
     tuple val(meta), file(reads1), file(reads2), file(reads3)
-    val(rstructure)
+    val rstructure 
 
     output:
-    tuple val(meta) file("*bam")
+    tuple val(meta), file("*bam"), emit: bam
 
     script:
     """  
@@ -137,7 +133,7 @@ process fastq_to_bam {
     --library "test" \\
     --read-group-id ${meta.patient}-${meta.id}
     """
-    }
+}
 
 process mark_illumina_adapters {
 
@@ -163,15 +159,65 @@ process mark_illumina_adapters {
     picard MarkIlluminaAdapters \\
     MAX_RECORDS_IN_RAM=4000000 \\
     INPUT=$bam \\
-    OUTPUT="${meta.id}_unaln_umi_marked.bam \\
-    M="${meta.patient}_${meta.id}"_mark_adaptor.metrics
+    OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
+    M="${meta.patient}_${meta.id}_mark_adaptor.metrics"
     """
     }
+
+    process  sam_to_fastq {
+
+    tag "sam to fastq ${meta.id}"
+
+    label 'process_high'
+
+    input:
+    tuple val(meta), file(bam) 
+
+    output:
+    tuple val(meta.id), file("*fastq")
+
+    script:
+    """
+    picard SamToFastq \\
+    MAX_RECORDS_IN_RAM=4000000 \\
+    INPUT=$bam \\
+    FASTQ="${meta.id}.fastq" \\
+    CLIPPING_ATTRIBUTE=XT \\
+    CLIPPING_ACTION=2 \\
+    INTERLEAVE=true \\
+    NON_PF=true 
+    """
+    }
+
+process umi_aln{
+
+    label 'process_high'
+
+    tag "bwa ${meta.id}"
+
+    input:
+    set idPatient, idSample, idRun, file(samToFastqFile) from samToFastq
+    file(bwaIndex) from ch_bwa
+    file(fasta) from ch_fasta
+    file(fai) from ch_fai
+
+    output:
+    set idPatient, idSample, idRun, file("${idPatient}_${idSample}_${idRun}.sam") into intialSam
+
+    script:
+    """
+    bwa mem -M -c 1 -t ${task.cpus} -k 50 -p "${fasta}" "${samToFastqFile}" > "${idPatient}_${idSample}_${idRun}.sam"
+    """
+    }
+
+
 
 workflow {
     fastqc(input_samples)
     trim_galore(input_samples)
     fix_trim(trim_galore.out.reads)
     fastq_to_bam(fix_trim.out.reads, ch_read_structure)
-    //mark_illumina_adapters
+    mark_illumina_adapters(fastq_to_bam.out.bam)
+    sam_to_fastq(mark_illumina_adapters.out.bam)
+
 }
