@@ -46,7 +46,11 @@ include {
    has_extension
 } from './modules/functions'
 
-include { FASTQC } from './modules/nf-core/software/fastqc/main' addParams( options: [:] )
+include { FASTQC }       from './modules/nf-core/software/fastqc/main' addParams( options: [:] )
+include { FASTQ_TO_BAM } from './modules/software/fastq_to_bam/main' addParams( options: [:] )
+include { MARK_ILLUMINA_ADAPTERS } from './modules/software/mark_illumina_adapters/main' addParams( options: [:] )
+include { BAM_TO_FASTQ } from './modules/software/bam_to_fastq/main' addParams( options: [:] )
+
 
 // Handle input
 tsv_path = null
@@ -55,103 +59,6 @@ if (tsv_path) {
     tsv_file = file(tsv_path)
     input_samples = extract_fastq(tsv_file)
 }
-
-/*
-process fastqc {
-    echo true
-    tag "FASTQC $meta.id"
-    publishDir params.outdir, mode: params.publish_dir_mode
-
-    input:
-    tuple val(meta), path(reads)
-
-    output:
-    path "fastqc_${meta.patient}-${meta.sample}-${meta.run}_logs"
-
-    script:
-    """
-    fastqc.sh "${meta.patient}-${meta.sample}-${meta.run}" "$reads"
-    """ 
-}
-*/
-process fastq_to_bam {
-    tag "fastq to bam: ${meta.id}"
-
-    input:
-    tuple val(meta), file(reads)
-    val rstructure 
-
-    output:
-    tuple val(meta), file("*bam"), emit: bam
-
-    script:
-    """  
-    mkdir temp
-    fgbio --tmp-dir=./temp FastqToBam \\
-    --input $reads \\
-    --output ${meta.id}_unaln_umi.bam \\
-    --read-structures $rstructure \\
-    --sort true \\
-    --umi-tag RX \\
-    --sample ${meta.id} \\
-    --library "test" \\
-    --read-group-id ${meta.patient}-${meta.id}
-    """
-}
-
-process mark_illumina_adapters {
-
-    tag "mark adapters ${meta.id}"
-
-    label 'process_high'
-
-    publishDir "$params.outdir/mark_illumina_adapters/${meta.patient}/${meta.id}", mode: params.publish_dir_mode,
-        saveAs: { filename ->
-                      if (filename.indexOf(".metrics") > 0) filename
-                      else null
-                }
-
-    input:
-    tuple val(meta), file(bam)
-
-    output:
-    tuple val(meta), file("*bam"), emit : bam
-    path "*_mark_adaptor.metrics", emit: mark_adaptor_log
-
-    script:
-    """
-    picard MarkIlluminaAdapters \\
-    MAX_RECORDS_IN_RAM=4000000 \\
-    INPUT=$bam \\
-    OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
-    M="${meta.patient}_${meta.id}_mark_adaptor.metrics"
-    """
-    }
-
-    process  sam_to_fastq {
-
-    tag "sam to fastq ${meta.id}"
-
-    label 'process_high'
-
-    input:
-    tuple val(meta), file(bam)
-
-    output:
-    tuple val(meta), file("*fastq"), emit: fastq
-
-    script:
-    """
-    picard SamToFastq \\
-    MAX_RECORDS_IN_RAM=4000000 \\
-    INPUT=$bam \\
-    FASTQ="${meta.id}.fastq" \\
-    CLIPPING_ATTRIBUTE=XT \\
-    CLIPPING_ACTION=2 \\
-    INTERLEAVE=true \\
-    NON_PF=true 
-    """
-    }
 
 process umi_aln {
 
@@ -488,11 +395,11 @@ process mark_duplicates {
 
 workflow {
     FASTQC(input_samples)
-    fastq_to_bam(input_samples, read_structure)
-    mark_illumina_adapters(fastq_to_bam.out.bam)
-    sam_to_fastq(mark_illumina_adapters.out.bam)
-    umi_aln(sam_to_fastq.out.fastq,bwa,fasta,fasta_fai)
-    merge_one(umi_aln.out.sam.join(mark_illumina_adapters.out.bam),fasta,dict)
+    FASTQ_TO_BAM(input_samples, read_structure)
+    MARK_ILLUMINA_ADAPTERS(FASTQ_TO_BAM.out.bam)
+    BAM_TO_FASTQ(MARK_ILLUMINA_ADAPTERS.out.bam)
+    umi_aln(BAM_TO_FASTQ.out.fastq,bwa,fasta,fasta_fai)
+    merge_one(umi_aln.out.sam.join(MARK_ILLUMINA_ADAPTERS.out.bam),fasta,dict)
     merge_one_bam = merge_one.out
     
     merge_one_bam.map{ meta, bam ->
