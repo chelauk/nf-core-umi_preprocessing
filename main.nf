@@ -46,6 +46,8 @@ include {
    has_extension
 } from './modules/functions'
 
+include { FASTQC } from './modules/nf-core/software/fastqc/main' addParams( options: [:] )
+
 // Handle input
 tsv_path = null
 if (params.input && (has_extension(params.input, "tsv") )) tsv_path = params.input
@@ -54,6 +56,7 @@ if (tsv_path) {
     input_samples = extract_fastq(tsv_file)
 }
 
+/*
 process fastqc {
     echo true
     tag "FASTQC $meta.id"
@@ -70,7 +73,7 @@ process fastqc {
     fastqc.sh "${meta.patient}-${meta.sample}-${meta.run}" "$reads"
     """ 
 }
-
+*/
 process fastq_to_bam {
     tag "fastq to bam: ${meta.id}"
 
@@ -484,7 +487,7 @@ process mark_duplicates {
 }
 
 workflow {
-    fastqc(input_samples)
+    FASTQC(input_samples)
     fastq_to_bam(input_samples, read_structure)
     mark_illumina_adapters(fastq_to_bam.out.bam)
     sam_to_fastq(mark_illumina_adapters.out.bam)
