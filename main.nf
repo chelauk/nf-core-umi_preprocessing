@@ -46,10 +46,15 @@ include {
    has_extension
 } from './modules/functions'
 
-include { FASTQC }       from './modules/nf-core/software/fastqc/main' addParams( options: [:] )
-include { FASTQ_TO_BAM } from './modules/software/fastq_to_bam/main' addParams( options: [:] )
+include { FASTQC }                 from './modules/nf-core/software/fastqc/main' addParams( options: [:] )
+include { FASTQ_TO_BAM }           from './modules/software/fastq_to_bam/main' addParams( options: [:] )
 include { MARK_ILLUMINA_ADAPTERS } from './modules/software/mark_illumina_adapters/main' addParams( options: [:] )
-include { BAM_TO_FASTQ } from './modules/software/bam_to_fastq/main' addParams( options: [:] )
+include { BAM_TO_FASTQ }           from './modules/software/bam_to_fastq/main' addParams( options: [:] )
+include { UMI_ALN_ONE }            from './modules/software/umi_aln_one/main' addParams( options: [:] )
+include { MERGE_BAM_ALIGNMENT }    from './modules/software/merge_bam_alignment/main' addParams( options: [:] )
+include { MERGE_RUNS}              from './modules/local/subworkflow/merging/main' addParams( options : [:])
+include { GROUP_READS_BY_UMI }     from './modules/software/group_reads_by_umi/main' addParams( options : [:])
+
 
 
 // Handle input
@@ -59,100 +64,6 @@ if (tsv_path) {
     tsv_file = file(tsv_path)
     input_samples = extract_fastq(tsv_file)
 }
-
-process umi_aln {
-
-    tag "bwa ${meta.id}"
-
-    input:
-    tuple val(meta), file(fastq) 
-    path bwa
-    path fasta
-    path fasta_fai
-
-    output:
-    tuple meta, file("*sam"), emit: sam
-
-    script:
-    """
-    bwa mem -M -c 1 -t $task.cpus -k 50 -p $fasta $fastq > ${meta.id}.sam
-    """
-    }
-
-process merge_one {
-
-    echo true
-
-    tag "merge ${meta.id}"
-    
-    input:
-    tuple val(meta), file(aligned_unmarked_sam), file(unaligned_marked_bam)
-    path fasta
-    path dict
-
-    output:
-    tuple val(meta), file("*aligned_marked.ba{m,i}")
-    
-    script:
-    """
-    picard MergeBamAlignment \\
-    MAX_RECORDS_IN_RAM=4000000 \\
-    R=$fasta \\
-    UNMAPPED_BAM=$unaligned_marked_bam \\
-    ALIGNED_BAM=$aligned_unmarked_sam \\
-    O="${meta.id}.aligned_marked.bam" \\
-    CREATE_INDEX=true ADD_MATE_CIGAR=true CLIP_ADAPTERS=false \\
-    CLIP_OVERLAPPING_READS=true INCLUDE_SECONDARY_ALIGNMENTS=true \\
-    MAX_INSERTIONS_OR_DELETIONS=-1 PRIMARY_ALIGNMENT_STRATEGY=MostDistant \\
-    ATTRIBUTES_TO_RETAIN=XS
-    """ 
-}
-
-process MERGE_BAM {
-    label 'CPUS_MAX'
-
-    tag "${meta.id}"
-
-
-    input:
-        tuple val(meta), path(bam)
-
-    output:
-        tuple val(meta), path("${meta.sample}.ba{m,i}"), emit: bam
-
-    script:
-    """
-    samtools merge --threads ${task.cpus} ${meta.sample}.bam ${bam}
-    samtools index ${meta.sample}.bam
-    """
-}
-
-process group_reads_by_umi{
-
-    tag "group reads ${meta.sample}"
-
-    publishDir params.outdir, mode: params.publish_dir_mode,
-        saveAs: {
-            if (it == "${meta.sample}_aln_merged_umi.metrics") "Reports/group_reads_by_umi/${meta.patient}/${meta.sample}/${it}"
-            else null
-        }
-
-    input:
-    tuple val(meta), file(bam_merged)
-
-    output:
-    tuple val(meta), file("*bam"), emit: group_by_umi
-    tuple val(meta.patient), val(meta.sample), file("*.metrics"), emit: group_by_umi_metrics
-
-    script:
-    """
-    fgbio -Xmx${task.memory.toGiga()}g GroupReadsByUmi \\
-    -i ${bam_merged[1]} \\
-    -f ${meta.sample}_aln_merged_umi.metrics \\
-    -s adjacency -m 30 -t RX -T MI --min-umi-length 9 \\
-    -o ${meta.sample}_aln_merged_umi_group.bam 
-   """
-   }
 
 process sort_bam_one{
 
@@ -398,50 +309,11 @@ workflow {
     FASTQ_TO_BAM(input_samples, read_structure)
     MARK_ILLUMINA_ADAPTERS(FASTQ_TO_BAM.out.bam)
     BAM_TO_FASTQ(MARK_ILLUMINA_ADAPTERS.out.bam)
-    umi_aln(BAM_TO_FASTQ.out.fastq,bwa,fasta,fasta_fai)
-    merge_one(umi_aln.out.sam.join(MARK_ILLUMINA_ADAPTERS.out.bam),fasta,dict)
-    merge_one_bam = merge_one.out
-    
-    merge_one_bam.map{ meta, bam ->
-            patient = meta.patient
-            sample  = meta.sample
-            gender  = meta.gender
-            status  = meta.status
-            [patient, sample, gender, status, bam]
-        }.groupTuple(by: [0,1])
-            .branch{
-                single:   it[4].size() == 1
-                multiple: it[4].size() > 1
-            }.set{ merge_one_bam_to_sort }
-
-    merge_one_single = merge_one_bam_to_sort.single.map {
-            patient, sample, gender, status, bam ->
-
-            def meta = [:]
-            meta.patient = patient
-            meta.sample = sample
-            meta.gender = gender[0]
-            meta.status = status[0]
-            meta.id = sample
-
-            [meta, bam[0]]
-        }
-    
-    bam_bwa_multiple = merge_one_bam_to_sort.multiple.map {
-            patient, sample, gender, status, bam ->
-
-            def meta = [:]
-            meta.patient = patient
-            meta.sample = sample
-            meta.gender = gender[0]
-            meta.status = status[0]
-            meta.id = sample
-
-            [meta, bam]
-        }
-    
-    MERGE_BAM(merge_one_bam_to_sort.multiple)
-    group_reads_by_umi(merge_one_single)
+    UMI_ALN_ONE(BAM_TO_FASTQ.out.fastq,bwa,fasta,fasta_fai)
+    MERGE_BAM_ALIGNMENT(UMI_ALN_ONE.out.bam.join(MARK_ILLUMINA_ADAPTERS.out.bam),fasta,dict)
+    MERGE_RUNS(MERGE_BAM_ALIGNMENT.out)
+    GROUP_READS_BY_UMI(MERGE_RUNS.out)
+    /*
     sort_bam_one(group_reads_by_umi.out.group_by_umi)
     call_consensus_reads(sort_bam_one.out)
     filter_consensus_reads(call_consensus_reads.out,fasta, min_reads)
@@ -451,4 +323,5 @@ workflow {
     sort_bam_three(filter_consensus_reads.out)
     merge_two(sort_bam_three.out.join(sort_bam_two.out), fasta, dict)
     mark_duplicates(merge_two.out)
+    */
 }
