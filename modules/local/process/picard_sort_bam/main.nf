@@ -1,10 +1,9 @@
 // Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from '../../nf-core/software/functions'
-
+include { initOptions; saveFiles; getSoftwareName } from '../../../nf-core/software/functions'
 params.options = [:]
 def options    = initOptions(params.options)
 
-process BAM_TO_FASTQ {
+process PICARD_SORT_BAM {
     tag "$meta.id"
     label 'process_high'
     publishDir "${params.outdir}",
@@ -16,19 +15,21 @@ process BAM_TO_FASTQ {
 
     input:
     tuple val(meta), file(bam)
+    path fasta
+    path dict
 
     output:
-    tuple val(meta), file("*fastq"), emit: fastq
+    tuple val(meta), file("*sort*.bam")
 
     script:
+    picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
     """
-    picard SamToFastq \\
+    picard -Xmx${task.memory.toGiga()}g SortSam \\
     MAX_RECORDS_IN_RAM=4000000 \\
+    SORT_ORDER=queryname \\
     INPUT=$bam \\
-    FASTQ="${meta.id}.fastq" \\
-    CLIPPING_ATTRIBUTE=XT \\
-    CLIPPING_ACTION=2 \\
-    INTERLEAVE=true \\
-    NON_PF=true 
-    """
+    OUTPUT=${meta.id}_sort.bam \\
+    VALIDATION_STRINGENCY=LENIENT
+    ${picard_opts}
+    """ 
     }

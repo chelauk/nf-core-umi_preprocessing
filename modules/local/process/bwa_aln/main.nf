@@ -1,10 +1,10 @@
 // Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from '../../nf-core/software/functions'
+include { initOptions; saveFiles; getSoftwareName } from '../../../nf-core/software/functions'
 
 params.options = [:]
 def options    = initOptions(params.options)
 
-process UMI_ALN_ONE {
+process BWA_ALN {
     tag "$meta.id"
     label 'process_high'
     publishDir "${params.outdir}",

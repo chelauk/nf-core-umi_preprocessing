@@ -1,4 +1,4 @@
-include { initOptions; saveFiles; getSoftwareName } from './../../nf-core/software/functions'
+include { initOptions; saveFiles; getSoftwareName } from '../../../nf-core/software/functions'
 
 params.options = [:]
 def options    = initOptions(params.options)

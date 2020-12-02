@@ -4,9 +4,7 @@
 ================================================================================
 */
 
-params.merge_bam_options      = [:]
-
-include { MERGE_BAM }              from '../../../software/merge_bam/merge_bam'                  addParams(options: params.merge_bam_options)
+include { MERGE_BAM }              from '../../process/merge_bam/merge_bam'     
 
 workflow MERGE_RUNS {
     take:
@@ -53,7 +51,6 @@ workflow MERGE_RUNS {
         }
 
         // STEP 1.5: MERGING AND INDEXING BAM FROM MULTIPLE LANES 
-        bam_bwa_multiple.view()
         MERGE_BAM(bam_bwa_multiple)
         bam_mapped       = bam_bwa_single.mix(MERGE_BAM.out.bam)
 
