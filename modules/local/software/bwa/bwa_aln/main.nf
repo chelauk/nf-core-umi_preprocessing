@@ -31,12 +31,10 @@ process BWA_ALN {
     def software   = getSoftwareName(task.process)
     CN = params.sequencing_center ? "CN:${params.sequencing_center}\\t" : ""
     readGroup = "@RG\\tID:${meta.run}\\t${CN}PU:${meta.run}\\tSM:${meta.sample}\\tLB:${meta.sample}\\tPL:ILLUMINA"
-    extra = meta.status == 1 ? "-B 3" : ""
     """
     bwa mem \\
     ${options.args} \\
     -R \"${readGroup}\" \\
-    ${extra} \\
     -t ${task.cpus} \\
     ${fasta} ${reads} | \\
     samtools sort -n --threads ${task.cpus} -m 2G - > ${meta.id}.bam
