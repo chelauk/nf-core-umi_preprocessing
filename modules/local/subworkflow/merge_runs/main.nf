@@ -3,8 +3,9 @@
                                 MERGING
 ================================================================================
 */
+params.merge_runs_mapping_options   = [:]
 
-include { SAMTOOLS_MERGE_BAM }              from '../../software/samtools/merge_bam/merge_bam'     
+include { SAMTOOLS_MERGE_BAM }              from '../../software/samtools/merge_bam/merge_bam' addParams(options: params.merge_runs_mapping_options)    
 
 workflow MERGE_RUNS {
     take:
