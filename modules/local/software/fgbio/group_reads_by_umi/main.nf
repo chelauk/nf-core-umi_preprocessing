@@ -19,7 +19,7 @@ process GROUP_READS_BY_UMI {
 
     output:
     tuple val(meta), file("*umi_group.bam"), emit: bam
-    path ("*.metrics"), emit: group_by_umi_metrics
+    path ("*.metrics"),                      emit: group_by_umi_metrics
 
     script:
     """

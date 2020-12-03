@@ -10,10 +10,10 @@ include { BAM_TO_FASTQ }           from '../../software/picard/bam_to_fastq/main
 include { BWA_ALN }                from '../../software/bwa/bwa_aln/main'                   addParams(options: params.bwamem1_mem_options)
 include { PICARD_MERGE_BAMS }      from '../../software/picard/picard_merge_bams/main'      addParams(options: params.picard_merge_bams_options)
 include { MERGE_RUNS}              from '../../subworkflow/merge_runs/main'                 addParams(options: params.merge_runs_mapping_options)
-include { GROUP_READS_BY_UMI }     from '../../software/fgbio/group_reads_by_umi/main' 
-include { FGBIO_SORT_BAM }         from '../../software/fgbio/fgbio_sort_bam/main'
-include { CALL_CONSENSUS }         from '../../software/fgbio/call_consensus/main'
-include { FILTER_CONSENSUS }       from '../../software/fgbio/filter_consensus/main'
+include { GROUP_READS_BY_UMI }     from '../../software/fgbio/group_reads_by_umi/main'      addParams(options: params.group_reads_mapping_options)
+include { FGBIO_SORT_BAM }         from '../../software/fgbio/fgbio_sort_bam/main'          addParams(options: params.fgbio_sort_mapping_options)
+include { CALL_CONSENSUS }         from '../../software/fgbio/call_consensus/main'          addParams(options: params.fgbio_call_consensus_mapping_options)
+include { FILTER_CONSENSUS }       from '../../software/fgbio/filter_consensus/main'        addParams(options: params.fgbio_filter_mapping_options)
 
 workflow UMI_STAGE_ONE {
     take:

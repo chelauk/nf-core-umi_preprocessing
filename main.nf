@@ -97,12 +97,17 @@ if (tsv_path) {
 
 include { FASTQC }        from './modules/nf-core/software/fastqc/main' 
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
-    bwamem1_mem_options:        modules['bwa_mem1_mem'],
-    fastq_to_bam_options:       modules['fastq_to_bam_mapping'],
-    mark_adapters_options:      modules['mark_illumina_adapters_mapping'],
-    bam_to_fastq_options:       modules['bam_to_fastq_mapping'],
-    picard_merge_bams_options:  modules['picard_merge_bams_mapping'],
-    merge_runs_mapping_options: modules['merge_runs_mapping'])
+    bwamem1_mem_options:                  modules['bwa_mem1_mem'],
+    fastq_to_bam_options:                 modules['fastq_to_bam_mapping'],
+    mark_adapters_options:                modules['mark_illumina_adapters_mapping'],
+    bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
+    picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
+    merge_runs_mapping_options:           modules['merge_runs_mapping'],
+    group_reads_mapping_options:          modules['group_reads_mapping'],
+    fgbio_sort_mapping_options:           modules['fgbio_sort_mapping'],
+    fgbio_call_consensus_mapping_options: modules['fgbio_call_consensus_mapping'],
+    fgbio_filter_mapping_options:         modules['fgbio_filter_mapping'],
+    )
 include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_stage_two' addParams(
     bwamem1_mem_options: modules['bwa_mem1_mem'] )
 
