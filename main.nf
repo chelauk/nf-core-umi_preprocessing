@@ -29,20 +29,21 @@ log.info Schema.params_summary_log(workflow, params, json_schema)
 =================================
 */
 
-// Check AWS batch settings
-Checks.aws_batch(workflow, params)
+Checks.aws_batch(workflow, params) // Check AWS batch settings
+Checks.hostname(workflow, params, log)  // Check the hostnames against configured profiles
 
-// Check the hostnames against configured profiles
-Checks.hostname(workflow, params, log)
+// MultiQC - Stage config files
 
+multiqc_config = file("$baseDir/assets/multiqc_config.yaml", checkIfExists: true)
+multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
+output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
+output_docs_images = file("$baseDir/docs/images/", checkIfExists: true)
 /*
 ================================================================================
                      UPDATE MODULES OPTIONS BASED ON PARAMS
 ================================================================================
 */
-
 modules = params.modules
-
 /*
 ================================================================================
                                CHECKING REFERENCES
@@ -95,7 +96,10 @@ if (tsv_path) {
     input_samples = extract_fastq(tsv_file)
 }
 
-include { FASTQC }        from './modules/nf-core/software/fastqc/main' 
+// params summary for MultiQC
+workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
+workflow_summary = Channel.value(workflow_summary)
+
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
     bwamem1_mem_options:                  modules['bwa_mem1_mem'],
     fastq_to_bam_options:                 modules['fastq_to_bam_mapping'],
@@ -109,10 +113,21 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
     fgbio_filter_mapping_options:         modules['fgbio_filter_mapping'],
     )
 include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_stage_two' addParams(
-    bwamem1_mem_options: modules['bwa_mem1_mem'] )
+    bwamem1_mem_options:                  modules['bwa_mem1_mem'],
+    bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
+    picard_sort_mapping_options:          modules['picard_sort_bams_mapping'],
+    picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
+    gatk_mark_duplicates_options:         modules['markduplicates'])
+
+include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'                addParams(
+    fastqc_options:                       modules['fastqc']
+)                   
 
 workflow {   
-    FASTQC(input_samples)
     UMI_STAGE_ONE(input_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads)
     UMI_STAGE_TWO(UMI_STAGE_ONE.out, bwa_index, fasta, fasta_fai,dict)
+    UMI_QC(input_samples,
+           multiqc_config,
+           multiqc_custom_config,
+           workflow_summary)
 }

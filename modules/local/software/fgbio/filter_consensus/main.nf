@@ -25,10 +25,10 @@ process FILTER_CONSENSUS {
     script:
     """
     fgbio -Xmx${task.memory.toGiga()}g FilterConsensusReads \\
-    -i $bam \\
+    -i ${bam} \\
     -o ${meta.id}_cons_filt.bam \\
-    -r $fasta \\
-    --min-reads $min_reads \\
+    -r ${fasta} \\
+    --min-reads ${min_reads} \\
     --max-read-error-rate 0.05 \\
     --min-base-quality 30 \\
     --max-base-error-rate 0.1 \\

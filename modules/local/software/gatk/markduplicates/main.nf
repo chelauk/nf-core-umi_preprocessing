@@ -1,5 +1,5 @@
 // Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from '../../../../nf-core/software/functions'
+include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 def options    = initOptions(params.options)
 
@@ -18,31 +18,33 @@ process MARK_DUPLICATES {
     tuple val(meta), file(bam)
 
     output:
-    tuple meta, path("*md.ba{m,i}"), emit: bam
-    // set idPatient, idSample into tsv_bam_duplicates_marked
-    tuple meta, path("*.metrics"), emit: mark_dup_report
+    tuple val(meta), path("${meta.patient}_${meta.sample}.md.bam"), path("${meta.patient}_${meta.sample}.md.bam.bai"), emit: bam
+    val meta,                                                                                                          emit: tsv
+    tuple meta, path("*.metrics"),                                                                                     emit: report
 
     script:
     markdup_java_options = task.memory.toGiga() < 8 ? params.markdup_java_options : "\"-Xms" +  (task.memory.toGiga() / 2).trunc() + "g -Xmx" + (task.memory.toGiga() - 1) + "g\""
-    metrics = "-M ${meta.patient}.${meta.sample}.bam.metrics"
+    metrics = "-M ${meta.patient}_${meta.sample}.bam.metrics"
+
     if (params.no_gatk_spark)
     """
-    gatk --java-options ${meta.patient}.${meta.sample}.bam.metrics" \\
+    gatk --java-options \\
         MarkDuplicates \\
         --MAX_RECORDS_IN_RAM 50000 \\
         --INPUT $bam \\
-        --METRICS_FILE  \\
+        --METRICS_FILE ${meta.patient}_${meta.sample}.bam.metrics \\
         --TMP_DIR . \\
         --ASSUME_SORT_ORDER coordinate \\
         --CREATE_INDEX true \\
-        --OUTPUT ${meta.patient}.${meta.sample}.md.bam
+        --OUTPUT ${meta.patient}_${meta.sample}.md.bam
+        mv ${meta.patient}_${meta.sample}.md.bai ${meta.patient}_${meta.sample}.md.bam.bai
     """
     else
     """
     gatk --java-options ${markdup_java_options} \\
         MarkDuplicatesSpark \\
         -I $bam \\
-        -O ${meta.patient}.${meta.sample}.md.bam \\
+        -O ${meta.patient}_${meta.sample}.md.bam \\
         ${metrics} \\
         --tmp-dir . \\
         --create-output-bam-index true \\

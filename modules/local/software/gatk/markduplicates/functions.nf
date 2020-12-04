@@ -16,12 +16,14 @@ def getSoftwareName(task_process) {
  */
 def initOptions(Map args) {
     def Map options = [:]
-    options.args          = args.args ?: ''
-    options.args2         = args.args2 ?: ''
-    options.publish_by_id = args.publish_by_id ?: false
-    options.publish_dir   = args.publish_dir ?: ''
-    options.publish_files = args.publish_files
-    options.suffix        = args.suffix ?: ''
+    options.args            = args.args ?: ''
+    options.args2           = args.args2 ?: ''
+    options.publish_by_id   = args.publish_by_id ?: false
+    options.publish_dir     = args.publish_dir ?: ''
+    options.publish_files   = args.publish_files
+    options.publish_dir2    = args.publish_dir2 ?: ''
+    options.publish_files2  = args.publish_files2
+    options.suffix          = args.suffix ?: ''
     return options
 }
 
@@ -40,14 +42,25 @@ def getPathFromList(path_list) {
 def saveFiles(Map args) {
     if (!args.filename.endsWith('.version.txt')) {
         def ioptions = initOptions(args.options)
-        def path_list = [ ioptions.publish_dir ?: args.publish_dir ]
+        def path_list =  [ ioptions.publish_dir  ?: args.publish_dir  ]
+        def path_list2 = [ ioptions.publish_dir2 ?: args.publish_dir2 ]
         if (ioptions.publish_by_id) {
             path_list.add(args.publish_id)
+            path_list2.add(args.publish_id)
         }
         if (ioptions.publish_files instanceof Map) {
             for (ext in ioptions.publish_files) {
                 if (args.filename.endsWith(ext.key)) {
                     def ext_list = path_list.collect()
+                    ext_list.add(ext.value)
+                    return "${getPathFromList(ext_list)}/$args.filename"
+                }
+            }
+        } 
+        if (ioptions.publish_files2 instanceof Map) {
+            for (ext in ioptions.publish_files2) {
+                if (args.filename.endsWith(ext.key)) {
+                    def ext_list = path_list2.collect()
                     ext_list.add(ext.value)
                     return "${getPathFromList(ext_list)}/$args.filename"
                 }
