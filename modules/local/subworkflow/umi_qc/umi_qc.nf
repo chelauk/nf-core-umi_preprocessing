@@ -19,12 +19,9 @@ workflow UMI_QC {
 
     main:
     FASTQC(input_samples)
-    qc_reports = qc_reports.mix(
-                        FASTQC.out.html,
-                        FASTQC.out.zip)
     MULTIQC(multiqc_config,
             multiqc_custom_config.ifEmpty([]),
             workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'),
-            qc_reports.collect())
+            FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     
 }

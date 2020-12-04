@@ -18,7 +18,7 @@ process MULTIQC {
     path multiqc_config
     path multiqc_custom_config
     path  workflow_summary
-    tuple val(meta), path(qc_reports)
+    path ('fastqc/*')
 
     output:
     path "*multiqc_report.html", emit: report
@@ -30,6 +30,6 @@ process MULTIQC {
     //filename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
     custom_config = params.multiqc_config ? "--config ${multiqc_custom_config}" : ''
     """
-    multiqc -f $options.args $multiqc_custom_config
+    multiqc -f $options.args . --config $multiqc_config
     """
 }
