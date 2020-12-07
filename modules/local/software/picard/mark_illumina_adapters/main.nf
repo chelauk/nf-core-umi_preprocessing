@@ -4,7 +4,7 @@ params.options = [:]
 def options    = initOptions(params.options)
 
 process MARK_ILLUMINA_ADAPTERS {
-    tag "$meta.id"
+    tag "{$meta.id}"
     label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -18,7 +18,7 @@ process MARK_ILLUMINA_ADAPTERS {
 
     output:
     tuple val(meta), file("*bam"), emit : bam
-    path "*_mark_adapter.metrics", emit: mark_adaptor_log
+    //path "*_mark_adapter.metrics", emit: mark_adaptor_log
 
     script:
     """

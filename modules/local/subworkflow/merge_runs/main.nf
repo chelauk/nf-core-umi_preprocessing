@@ -56,5 +56,5 @@ workflow MERGE_RUNS {
         bam_mapped       = bam_bwa_single.mix(SAMTOOLS_MERGE_BAM.out.bam)
 
     emit:
-        bam = bam_mapped
+        bam_mapped
 }

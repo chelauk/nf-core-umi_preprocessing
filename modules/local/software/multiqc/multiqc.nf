@@ -19,6 +19,7 @@ process MULTIQC {
     path multiqc_custom_config
     path  workflow_summary
     path ('fastqc/*')
+    path ('hs_metrics/*')
 
     output:
     path "*multiqc_report.html", emit: report

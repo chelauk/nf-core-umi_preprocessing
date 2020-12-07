@@ -1,4 +1,4 @@
-include { initOptions; saveFiles; getSoftwareName } from '../../../../nf-core/software/functions'
+include { initOptions; saveFiles; getSoftwareName } from './functions'
 
 params.options = [:]
 def options    = initOptions(params.options)
@@ -27,6 +27,6 @@ process SAMTOOLS_MERGE_BAM {
     name = options.suffix ? "${meta.id}.${options.suffix}" : "${meta.id}"
     """
     samtools merge --threads ${task.cpus} temp.bam ${bam}
-    samtools sort --threads ${task.cpus} -n -o ${name}.bam  temp.bam
+    samtools sort  --threads ${task.cpus} -o ${name}.bam  temp.bam
     """
 }
