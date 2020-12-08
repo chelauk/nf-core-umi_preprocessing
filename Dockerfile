@@ -3,11 +3,18 @@ LABEL authors="Chela James" \
       description="Docker image containing all software requirements for the umi_preprocessing"
 
 # Install the conda environment
+RUN conda install -c conda-forge mamba
 COPY environment.yml /
-RUN conda env create -f /environment.yml && conda clean -a
+RUN mamba env create -f /environment.yml && mamba clean -a
 
 # Add conda installation dir to PATH (instead of doing 'conda activate')
-ENV PATH /opt/conda/envs/nf-core-sarek-2.6.1/bin:$PATH
+ENV PATH /opt/conda/envs/nf-core-umipreprocessing-1.0.0/bin:$PATH
+
+# These are needed for R packages
+RUN apt-get update && apt-get install build-essential -y
+# Install R packages
+RUN R -e "install.packages('devtools',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "devtools::install_github("caravagn/evoverse", ref = 'development')"
 
 # Dump the details of the installed packages to a file for posterity
-RUN conda env export --name umi-umi_preprocessing-0.0.1 > umi-umi_preprocessing-0.0.1.yml
+RUN conda env export --name nf-core-umipreprocessing-1.0.0 > nf-core-umipreprocessing-1.0.0.yml
