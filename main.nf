@@ -102,7 +102,7 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
     merge_runs_mapping_options:           modules['merge_runs_mapping'],
     collect_hs_metrics_options:           modules['picard_hs_metrics'],
-    error_rate_options:                   modules['fgbio_error_rate'],
+//    error_rate_options:                   modules['fgbio_error_rate'],
     group_reads_mapping_options:          modules['group_reads_mapping'],
     fgbio_sort_mapping_options:           modules['fgbio_sort_mapping'],
     fgbio_call_consensus_mapping_options: modules['fgbio_call_consensus_mapping'],
@@ -128,5 +128,9 @@ workflow {
            multiqc_config,
            multiqc_custom_config,
            workflow_summary,
-           UMI_STAGE_ONE.out.hs_metrics)
+           UMI_STAGE_ONE.out.hs_metrics,
+           //UMI_STAGE_ONE.out.error_rate
+           UMI_STAGE_ONE.out.group_metrics,
+           UMI_STAGE_TWO.out.md_report
+           )
 }

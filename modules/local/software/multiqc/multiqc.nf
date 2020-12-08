@@ -20,6 +20,9 @@ process MULTIQC {
     path  workflow_summary
     path ('fastqc/*')
     path ('hs_metrics/*')
+    //path ('error_rate/*')
+    path ('group_metrics/*')
+    path ('md_metrics/*')
 
     output:
     path "*multiqc_report.html", emit: report

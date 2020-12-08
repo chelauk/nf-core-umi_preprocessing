@@ -1,5 +1,5 @@
 // Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from '../../../../nf-core/software/functions'
+include { initOptions; saveFiles; getSoftwareName } from './functions'
 
 params.options = [:]
 def options    = initOptions(params.options)
@@ -19,7 +19,7 @@ process GROUP_READS_BY_UMI {
 
     output:
     tuple val(meta), file("*umi_group.bam"), emit: bam
-    path ("*.metrics"),                      emit: group_by_umi_metrics
+    tuple val(meta), file("*.metrics"),      emit: group_metrics
 
     script:
     """

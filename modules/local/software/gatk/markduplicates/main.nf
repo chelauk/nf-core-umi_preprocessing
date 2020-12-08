@@ -18,7 +18,7 @@ process MARK_DUPLICATES {
     tuple val(meta), file(bam)
 
     output:
-    tuple val(meta), path("${meta.patient}_${meta.sample}.md.bam"), path("${meta.patient}_${meta.sample}.md.bam.bai"), emit: bam
+    tuple val(meta), path("${meta.patient}_${meta.sample}.md.bam"), path("${meta.patient}_${meta.sample}.md.bam.bai"), emit: md_bam
     val meta,                                                                                                          emit: tsv
     tuple meta, path("*.metrics"),                                                                                     emit: report
 

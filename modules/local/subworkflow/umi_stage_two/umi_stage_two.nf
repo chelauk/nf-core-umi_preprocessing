@@ -6,6 +6,7 @@ include { PICARD_SORT_BAM }                 from '../../software/picard/picard_s
 include { PICARD_SORT_BAM as SORT_BAM_TWO } from '../../software/picard/picard_sort_bam/main'   addParams(options: params.picard_sort_mapping_options, second_file: true )
 include { PICARD_MERGE_BAMS }               from '../../software/picard/picard_merge_bams/main' addParams(options: params.picard_merge_bams_options)
 include { MARK_DUPLICATES }                 from '../../software/gatk/markduplicates/main'      addParams(options: params.gatk_mark_duplicates_options)
+//include { ERRORRATE_BY_READ_POSITION }      from '../../software/fgbio/error_rate/main'         addParams(options: params.error_rate_options, second_file: true)
 
 workflow UMI_STAGE_TWO {
 
@@ -23,4 +24,10 @@ workflow UMI_STAGE_TWO {
     SORT_BAM_TWO(filtered_bam,fasta,dict)
     PICARD_MERGE_BAMS(PICARD_SORT_BAM.out.join(SORT_BAM_TWO.out),fasta,dict)
     MARK_DUPLICATES(PICARD_MERGE_BAMS.out.merged_bam)    
+    //ERRORRATE_BY_READ_POSITION(MARK_DUPLICATES.out.md_bam,fasta,dict,dbsnp,dbsnp_index,BED_TO_INTERVAL_LIST.out.interval_list)
+
+    emit:
+    //err_report_2 = ERRORRATE_BY_READ_POSITION.out
+    md_report    = MARK_DUPLICATES.out.report
+
 }
