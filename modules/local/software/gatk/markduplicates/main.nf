@@ -12,13 +12,13 @@ process MARK_DUPLICATES {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda     (params.enable_conda ? "bioconda::gatk4=4.1.9" : null)
-    container "quay.io/biocontainers/gatk4:4.1.9--0"
+    //container "quay.io/biocontainers/gatk4:4.1.9--0"
 
     input:
     tuple val(meta), file(bam)
 
     output:
-    tuple val(meta), path("${meta.patient}_${meta.sample}.md.bam"), path("${meta.patient}_${meta.sample}.md.bam.bai"), emit: md_bam
+    tuple val(meta), path("*ba{m,i}"), emit: md_bam
     val meta,                                                                                                          emit: tsv
     tuple meta, path("*.metrics"),                                                                                     emit: report
 

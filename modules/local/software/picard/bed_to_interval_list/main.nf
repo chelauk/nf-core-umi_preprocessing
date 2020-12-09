@@ -12,7 +12,7 @@ process BED_TO_INTERVAL_LIST {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:'') }
 
     conda     (params.enable_conda ? "bioconda::picard=2.23.8" : null)
-    container "quay.io/biocontainers/picard:2.23.8--0"
+    //container "quay.io/biocontainers/picard:2.23.8--0"
 
     input:
     path target_bed
@@ -25,8 +25,8 @@ process BED_TO_INTERVAL_LIST {
     script:
     def software  = getSoftwareName(task.process)
     """
-    gsed -n 2p ${dict} | if grep -q chr
-    then gsed -i \'s/^/chr/\' ${target_bed}
+    sed -n 2p ${dict} | if grep -q chr
+    then sed -i \'s/^/chr/\' ${target_bed}
     fi
     picard -Xmx${task.memory.toGiga()}g BedToIntervalList \\
     I=${target_bed} \\

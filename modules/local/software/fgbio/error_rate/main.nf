@@ -12,7 +12,7 @@ process ERRORRATE_BY_READ_POSITION {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda     (params.enable_conda ? "bioconda::fgbio=1.3.0" : null)
-    container "quay.io/biocontainers/fgbio:1.3.0--0"
+    //container "quay.io/biocontainers/fgbio:1.3.0--0"
 
     input:
     tuple val(meta), path(bam)
@@ -26,10 +26,10 @@ process ERRORRATE_BY_READ_POSITION {
     tuple val(meta), file("*.error_rate_by_read_position.txt"), emit: error_rate
 
     script:
-    output_options = params.stage_two ? "--output ${meta.patient}_${meta.sample}_st2_qc" : "--output ${meta.patient}_${meta.sample}_st1_qc"
+    output_options = params.second_file ? "--output ${meta.patient}_${meta.sample}_st2_qc" : "--output ${meta.patient}_${meta.sample}_st1_qc"
     """
     fgbio -Xmx${task.memory.toGiga()}g ErrorRateByReadPosition \\
-    --input ${bam} \\
+    --input *bam \\
     ${output_options} \\
     --intervals ${interval_list} \\
     --ref ${fasta} \\

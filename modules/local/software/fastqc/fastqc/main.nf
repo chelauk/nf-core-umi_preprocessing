@@ -12,7 +12,7 @@ process FASTQC {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda     (params.enable_conda ? "bioconda::fastqc=0.11.9" : null)
-    container "quay.io/biocontainers/fastqc:0.11.9--0"
+    //container "quay.io/biocontainers/fastqc:0.11.9--0"
     
     input:
     tuple val(meta), path(reads)

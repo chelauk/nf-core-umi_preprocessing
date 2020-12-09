@@ -16,9 +16,10 @@ workflow UMI_QC {
     multiqc_custom_config
     workflow_summary
     hs_metrics
-    //error_rate
+    error_rate
     group_metrics
     md_report
+    error_rate_2
 
     main:
     FASTQC(input_samples)
@@ -28,7 +29,8 @@ workflow UMI_QC {
             FASTQC.out.zip.collect{it[1]}.ifEmpty([]),
             hs_metrics.collect{it[1]}.ifEmpty([]),
             group_metrics.collect{it[1]}.ifEmpty([]),
-            md_report.collect{it[1]}.ifEmpty([]))
-            //error_rate.collect{it[1]}.ifEmpty([]))
+            md_report.collect{it[1]}.ifEmpty([]),
+            error_rate.collect{it[1]}.ifEmpty([]),
+            error_rate_2.collect{it[1]}.ifEmpty([]))
     
 }

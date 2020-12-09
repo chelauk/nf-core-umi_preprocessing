@@ -12,9 +12,6 @@ ENV PATH /opt/conda/envs/nf-core-umipreprocessing-1.0.0/bin:$PATH
 
 # These are needed for R packages
 RUN apt-get update && apt-get install build-essential -y
-# Install R packages
-RUN R -e "install.packages('devtools',dependencies=TRUE, repos='http://cran.rstudio.com/')"
-RUN R -e "devtools::install_github("caravagn/evoverse", ref = 'development')"
 
 # Dump the details of the installed packages to a file for posterity
 RUN conda env export --name nf-core-umipreprocessing-1.0.0 > nf-core-umipreprocessing-1.0.0.yml

@@ -12,7 +12,7 @@ process PICARD_MERGE_BAMS {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda     (params.enable_conda ? "bioconda::picard=2.23.8" : null)
-    container "quay.io/biocontainers/picard:2.23.8--0"
+    //container "quay.io/biocontainers/picard:2.23.8--0"
 
     input:
     tuple val(meta), file(aligned_unmarked_sam), file(unaligned_marked_bam)

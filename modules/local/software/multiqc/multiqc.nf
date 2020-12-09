@@ -12,7 +12,7 @@ process MULTIQC {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:'') }
 
     conda     (params.enable_conda ? "bioconda::multiqc=1.9" : null)
-    container "quay.io/biocontainers/multiqc:1.9--pyh9f0ad1d_0"
+    //container "quay.io/biocontainers/multiqc:1.9--pyh9f0ad1d_0"
 
     input:
     path multiqc_config
@@ -20,9 +20,10 @@ process MULTIQC {
     path  workflow_summary
     path ('fastqc/*')
     path ('hs_metrics/*')
-    //path ('error_rate/*')
+    path ('error_rate/*')
     path ('group_metrics/*')
     path ('md_metrics/*')
+    path ('error_rate_2/*')
 
     output:
     path "*multiqc_report.html", emit: report
