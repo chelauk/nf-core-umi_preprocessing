@@ -35,8 +35,8 @@ workflow UMI_STAGE_TWO {
             sample  = meta.sample
             gender  = meta.gender
             status  = meta.status
-            bam = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam"
-            bai = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam.bai"
+            bam = "${launchDir}/${params.outdir}/preprocessing/mark_duplicates/${patient}_${sample}.md.bam"
+            bai = "${launchDir}/${params.outdir}/preprocessing/mark_duplicates/${patient}_${sample}.md.bam.bai"
             ["md_${sample}.tsv", "${patient}\t${gender}\t${status}\t${sample}\t${bam}\t${bai}\n"]
     }
 
@@ -45,8 +45,8 @@ workflow UMI_STAGE_TWO {
             sample  = meta.sample
             gender  = meta.gender
             status  = meta.status
-            bam = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam"
-            bai = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam.bai"
+            bam = "${launchDir}/${params.outdir}/preprocessing/mark_duplicates/${patient}_${sample}.md.bam"
+            bai = "${launchDir}/${params.outdir}/preprocessing/mark_duplicates/${patient}_${sample}.md.bam.bai"
             "${patient}\t${gender}\t${status}\t${sample}\t${bam}\t${bai}\n"
     }.collectFile(name: 'md.tsv', sort: true, storeDir: "${params.outdir}/preprocessing/tsv") 
     ERRORRATE_BY_READ_POSITION(MARK_DUPLICATES.out.md_bam,fasta,dict,dbsnp,dbsnp_index,iv_list)
@@ -54,6 +54,5 @@ workflow UMI_STAGE_TWO {
     emit:
     error_rate_2 = ERRORRATE_BY_READ_POSITION.out
     md_report    = MARK_DUPLICATES.out.report
-
 
 }
