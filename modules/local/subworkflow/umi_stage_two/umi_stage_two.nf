@@ -26,11 +26,34 @@ workflow UMI_STAGE_TWO {
     PICARD_SORT_BAM(BWA_ALN.out.bam,fasta,dict)
     SORT_BAM_TWO(filtered_bam,fasta,dict)
     PICARD_MERGE_BAMS(PICARD_SORT_BAM.out.join(SORT_BAM_TWO.out),fasta,dict)
-    MARK_DUPLICATES(PICARD_MERGE_BAMS.out.merged_bam)    
+    MARK_DUPLICATES(PICARD_MERGE_BAMS.out.merged_bam)   
+    md_bam = MARK_DUPLICATES.out.md_bam
+    md_tsv = MARK_DUPLICATES.out.tsv
+
+    md_tsv.collectFile(storeDir: "${params.outdir}/preprocessing/tsv") { meta ->
+            patient = meta.patient
+            sample  = meta.sample
+            gender  = meta.gender
+            status  = meta.status
+            bam = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam"
+            bai = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam.bai"
+            ["md_${sample}.tsv", "${patient}\t${gender}\t${status}\t${sample}\t${bam}\t${bai}\n"]
+    }
+
+    md_tsv.map { meta ->
+            patient = meta.patient
+            sample  = meta.sample
+            gender  = meta.gender
+            status  = meta.status
+            bam = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam"
+            bai = "${params.outdir}/preprocessing/${patient}_${sample}/md/${patient}_${sample}.md.bam.bai"
+            "${patient}\t${gender}\t${status}\t${sample}\t${bam}\t${bai}\n"
+    }.collectFile(name: 'md.tsv', sort: true, storeDir: "${params.outdir}/preprocessing/tsv") 
     ERRORRATE_BY_READ_POSITION(MARK_DUPLICATES.out.md_bam,fasta,dict,dbsnp,dbsnp_index,iv_list)
 
     emit:
     error_rate_2 = ERRORRATE_BY_READ_POSITION.out
     md_report    = MARK_DUPLICATES.out.report
+
 
 }
