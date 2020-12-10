@@ -12,7 +12,7 @@ process FASTQ_TO_BAM {
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda     (params.enable_conda ? "bioconda::fgbio=1.3.0" : null)
-    container "quay.io/biocontainers/fgbio:1.3.0--0"
+//    container "quay.io/biocontainers/fgbio:1.3.0--0"
 
     input:
     tuple val(meta), path(reads)
