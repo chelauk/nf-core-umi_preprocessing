@@ -22,7 +22,7 @@ process BAM_TO_FASTQ {
 
     script:
     """
-    picard SamToFastq \\
+    picard -Xmx${task.memory.toGiga()}g SamToFastq \\
     MAX_RECORDS_IN_RAM=4000000 \\
     INPUT=$bam \\
     FASTQ="${meta.id}.fastq" \\
