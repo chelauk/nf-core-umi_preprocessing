@@ -19,7 +19,7 @@ process BED_TO_INTERVAL_LIST {
     path dict
 
     output:
-    path "interval.list", emit: interval.list
+    path "interval.list", emit: interval_list
     path "*.version.txt", emit: version
 
     script:
