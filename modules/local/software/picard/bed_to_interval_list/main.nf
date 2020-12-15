@@ -19,8 +19,8 @@ process BED_TO_INTERVAL_LIST {
     path dict
 
     output:
-    file ("interval.list"), emit: interval_list
-    path "*.version.txt", emit: version
+    path "interval.list",   emit: interval_list
+    path "*.version.txt",   emit: version
 
     script:
     def software  = getSoftwareName(task.process)
