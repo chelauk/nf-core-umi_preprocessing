@@ -57,8 +57,6 @@ params.dict                    = params.genome ? params.genomes[params.genome].d
 params.fasta                   = params.genome ? params.genomes[params.genome].fasta       ?: false : false
 params.fasta_fai               = params.genome ? params.genomes[params.genome].fasta_fai   ?: false : false
 file("${params.outdir}/no_file").text = "no_file\n"
-// Initialize files channels based on params, not defined within the params.genomes[params.genome] scope
-target_bed                     = params.target_bed ? file(params.target_bed) : file("${params.outdir}/no_file")
 
 // Initialize file channels based on params, defined in the params.genomes[params.genome] scope
 bwa_index         = params.bwa               ? file(params.bwa)               : file("${params.outdir}/no_file")
