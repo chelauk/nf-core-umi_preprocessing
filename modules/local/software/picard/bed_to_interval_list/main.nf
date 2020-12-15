@@ -32,6 +32,6 @@ process BED_TO_INTERVAL_LIST {
     I=${target_bed} \\
     SD=${dict} \\
     O=interval.list
-    echo \$(picard  BedToIntervalList --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d: > ${software}.version.txt
+    echo \$(picard  BedToIntervalList --version 2>&1) > ${software}.version.txt
     """ 
     }
