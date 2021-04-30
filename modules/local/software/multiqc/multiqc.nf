@@ -19,6 +19,7 @@ process MULTIQC {
     path multiqc_custom_config
     path  workflow_summary
     path ('fastqc/*')
+    path ('trim_galore/*')
     path ('hs_metrics/*')
     path ('error_rate/*')
     path ('group_metrics/*')
