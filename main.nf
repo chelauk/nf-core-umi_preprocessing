@@ -117,13 +117,16 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
 )
 
 include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'                addParams(
-    fastqc_options:                       modules['fastqc']
+    fastqc_options:                       modules['fastqc'],
+    trimgalore_options:                   modules['trimgalore']
 )                   
 
 workflow {
-    UMI_STAGE_ONE(input_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+    TRIMGALORE(input_samples)
+    UMI_STAGE_ONE(TRIMGALORE.out.reads, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
     UMI_STAGE_TWO(UMI_STAGE_ONE.out.filtered_bam, bwa_index, fasta, fasta_fai, dict, dbsnp, dbsnp_index,UMI_STAGE_ONE.out.iv_list)
     UMI_QC(input_samples,
+           TRIMGALORE.out.zip,
            multiqc_config,
            multiqc_custom_config,
            workflow_summary,
