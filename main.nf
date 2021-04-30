@@ -91,6 +91,9 @@ if (tsv_path) {
 workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
 workflow_summary = Channel.value(workflow_summary)
 
+include { TRIMGALORE } from './modules/nf-core/software/trimgalore' addParams (
+    trimgalore_options:                    modules['trimgalore']
+	)
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
     bed_to_intervals_options:             modules['bed_to_intervals'],
     bwamem1_mem_options:                  modules['bwa_mem1_mem'],
@@ -118,7 +121,6 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
 
 include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'                addParams(
     fastqc_options:                       modules['fastqc'],
-    trimgalore_options:                   modules['trimgalore']
 )                   
 
 workflow {

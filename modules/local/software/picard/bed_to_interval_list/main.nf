@@ -25,9 +25,6 @@ process BED_TO_INTERVAL_LIST {
     script:
     def software  = getSoftwareName(task.process)
     """
-    sed -n 2p ${dict} | if grep -q chr
-    then sed -i \'s/^/chr/\' ${target_bed}
-    fi
     picard -Xmx${task.memory.toGiga()}g BedToIntervalList \\
     I=${target_bed} \\
     SD=${dict} \\
