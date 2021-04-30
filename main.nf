@@ -128,7 +128,7 @@ workflow {
     UMI_STAGE_ONE(TRIMGALORE.out.reads, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
     UMI_STAGE_TWO(UMI_STAGE_ONE.out.filtered_bam, bwa_index, fasta, fasta_fai, dict, dbsnp, dbsnp_index,UMI_STAGE_ONE.out.iv_list)
     UMI_QC(input_samples,
-           TRIMGALORE.out.zip,
+           TRIMGALORE.zip,
            multiqc_config,
            multiqc_custom_config,
            workflow_summary,
