@@ -125,10 +125,10 @@ include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'       
 
 workflow {
     TRIMGALORE_WF(input_samples)
-    UMI_STAGE_ONE(TRIMGALORE_WF.out.reads, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+    UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
     UMI_STAGE_TWO(UMI_STAGE_ONE.out.filtered_bam, bwa_index, fasta, fasta_fai, dict, dbsnp, dbsnp_index,UMI_STAGE_ONE.out.iv_list)
     UMI_QC(input_samples,
-           TRIMGALORE_WF.out.zip,
+           TRIMGALORE_WF.out.trim_qc,
            multiqc_config,
            multiqc_custom_config,
            workflow_summary,
