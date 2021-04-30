@@ -91,7 +91,7 @@ if (tsv_path) {
 workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
 workflow_summary = Channel.value(workflow_summary)
 
-include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf' addParams (
+include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf/trimgalore_wf' addParams (
     trimgalore_options:                    modules['trimgalore']
 	)
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
