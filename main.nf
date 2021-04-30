@@ -91,7 +91,7 @@ if (tsv_path) {
 workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
 workflow_summary = Channel.value(workflow_summary)
 
-include { TRIMGALORE } from './modules/nf-core/software/trimgalore' addParams (
+include { TRIMGALORE } from './modules/nf-core/software/trimgalore/main.nf' addParams (
     trimgalore_options:                    modules['trimgalore']
 	)
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
