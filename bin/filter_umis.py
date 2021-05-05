@@ -7,7 +7,7 @@ import sys
 
 def stream_fastq(fqfile):
     """Read a fastq file and provide an iterable of the sequence ID, the
-    full header, the sequence, and the quaity scores.
+    full header, the sequence, and the quality scores.
     Note that the sequence ID is the header up until the first space,
     while the header is the whole header.
     """
@@ -23,7 +23,6 @@ def stream_fastq(fqfile):
         seq = qin.readline()
         qualheader = qin.readline()
         qualscores = qin.readline()
-        qualscores = qualscores
         yield seqid, header, seq, qualscores
 
 if __name__ == '__main__':
