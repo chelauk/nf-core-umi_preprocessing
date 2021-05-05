@@ -5,7 +5,7 @@
 */
 
 include { TRIMGALORE }                 from '../../../nf-core/software/trimgalore/main'   addParams(options: params.trimgalore_options)
-include { FILTER_UMIS }                from '../../software/filter_umi/main.nf'
+include { FILTER_UMIS }                from '../../software/filter_umi/main.nf'           addParams(options: params.trim_umi_options)
 
 workflow TRIMGALORE_WF {
     take:
