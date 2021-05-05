@@ -1,0 +1,26 @@
+// Import generic module functions
+include { initOptions; saveFiles; getSoftwareName } from './functions'
+
+params.options = [:]
+def options    = initOptions(params.options)
+
+process FILTER_UMIS {
+    tag "$meta.id"
+    label 'process_medium'
+    publishDir "${params.outdir}",
+        mode: params.publish_dir_mode,
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
+
+    input:
+    tuple val(meta), path(reads)
+
+    output:
+    tuple val(meta), path("*val*.fq.gz")    , emit: reads
+
+    script:
+    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    """
+    python filter_umis.py -u ${prefix}_2.fq.gz -v ${prefix}_1_val_1.fq.gz
+    """
+
+}
