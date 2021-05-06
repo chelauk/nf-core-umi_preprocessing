@@ -93,7 +93,7 @@ workflow_summary = Channel.value(workflow_summary)
 
 include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf/trimgalore_wf' addParams (
     trimgalore_options:                    modules['trimgalore']
-    trim_umi_options                       modules['trim_umi']
+    trim_umi_options:                       modules['trim_umi']
 	)
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
     bed_to_intervals_options:             modules['bed_to_intervals'],
