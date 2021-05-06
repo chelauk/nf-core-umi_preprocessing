@@ -3,7 +3,6 @@
 import gzip
 import argparse
 import os
-import sys 
 
 def stream_fastq(fqfile):
     """Read a fastq file and provide an iterable of the sequence ID, the
