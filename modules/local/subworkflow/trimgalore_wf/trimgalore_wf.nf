@@ -13,7 +13,7 @@ workflow TRIMGALORE_WF {
 
     main:
     TRIMGALORE(input_samples)
-    FILTER_UMIS(TRIMGALORE.out.reads)
+    FILTER_UMIS(TRIMGALORE.out.reads.toSortedList())
 
     emit:
     trimmed_samples   = FILTER_UMIS.out.reads

@@ -15,11 +15,13 @@ process FILTER_UMIS {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("*val*.fq.gz")    , emit: reads
+    tuple val(meta), path("*.fq.gz")    , emit: reads
 
     script:
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
+    [ ! -f  ${prefix}_1_val_1.fq.gz ] && ln -s ${reads[0]} ${prefix}_1_val_1.fq.gz
+    [ ! -f  ${prefix}_3_val_2.fq.gz ] && ln -s ${reads[2]} ${prefix}_3_val_3.fq.gz
     filter_umis.py -u ${prefix}_2.fq.gz -v ${prefix}_1_val_1.fq.gz
     """
 
