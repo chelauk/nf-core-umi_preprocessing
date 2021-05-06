@@ -30,7 +30,9 @@ if __name__ == '__main__':
     parser.add_argument('-u', help='UMI reads file')
     parser.add_argument('-v', help='The shorter validated R1 file')
     args = parser.parse_args()
-    qout = gzip.open("{}".format(args.u.replace("fq.gz","val_umi.fq.gz")),'wb')
+    validated_umi_file = "{}".format(args.u.replace("fq.gz","val_umi.fq.gz"))
+    print(os.getcwd())
+    qout = gzip.open(validated_umi_file,'wb')
     R1_generator = stream_fastq(args.v) # the shorter list 
     R2_generator = stream_fastq(args.u) # the (longer) umi list
 
