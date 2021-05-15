@@ -1,5 +1,6 @@
 params.second_sort = true
 
+include { BED_TO_INTERVAL_LIST }       from '../../software/picard/bed_to_interval_list/main'   addParams(options: params.bed_to_intervals_options)
 include { BAM_TO_FASTQ }                    from '../../software/picard/bam_to_fastq/main'      addParams(options: params.bam_to_fastq_options)
 include { BWA_ALN }                         from '../../software/bwa/bwa_aln/main'              addParams(options: params.bwamem1_mem_options)
 include { PICARD_SORT_BAM }                 from '../../software/picard/picard_sort_bam/main'   addParams(options: params.picard_sort_mapping_options)
@@ -15,12 +16,13 @@ workflow UMI_STAGE_TWO {
     bwa_index
     fasta
     fasta_fai
+    target_bed
     dict
     dbsnp
     dbsnp_index
-    iv_list
 
     main:
+    BED_TO_INTERVAL_LIST(target_bed, dict)
     BAM_TO_FASTQ(filtered_bam)
     BWA_ALN(BAM_TO_FASTQ.out,bwa_index,fasta,fasta_fai)
     PICARD_SORT_BAM(BWA_ALN.out.bam,fasta,dict)
@@ -49,7 +51,7 @@ workflow UMI_STAGE_TWO {
             bai = "${launchDir}/${params.outdir}/preprocessing/mark_duplicates/${patient}_${sample}.md.bam.bai"
             "${patient}\t${gender}\t${status}\t${sample}\t${bam}\t${bai}\n"
     }.collectFile(name: 'md.tsv', sort: true, storeDir: "${params.outdir}/preprocessing/tsv") 
-    ERRORRATE_BY_READ_POSITION(MARK_DUPLICATES.out.md_bam,fasta,dict,dbsnp,dbsnp_index,iv_list)
+    ERRORRATE_BY_READ_POSITION(MARK_DUPLICATES.out.md_bam,fasta,dict,dbsnp,dbsnp_index,BED_TO_INTERVAL_LIST.out.interval_list)
 
     emit:
     error_rate_2 = ERRORRATE_BY_READ_POSITION.out

@@ -73,9 +73,6 @@ read_structure    = params.read_structure    ?: Channel.empty()
 params.enable_conda = false
 params.second_file  = false
 
-// initiate value channel for stage
-stage = params.stage ? params.stage : null
-
 //  include functions
 include {
     extract_fastq;
@@ -85,7 +82,7 @@ include {
 
 // Handle input
 tsv_path = null
-if (params.input && (has_extension(params.input, "tsv")) && stage != "two" ) tsv_path = params.input
+if (params.input && (has_extension(params.input, "tsv")) && (params.stage != "two") ) tsv_path = params.input
 if (tsv_path) {
     tsv_file = file(tsv_path)
     input_samples = extract_fastq(tsv_file)
@@ -93,7 +90,7 @@ if (tsv_path) {
 
 // handle bam input for stage 2
 bam_tsv_path = null
-if (params.input && (has_extension(params.input, "tsv")) && stage == "two" ) bam_tsv_path = params.input
+if (params.input && (has_extension(params.input, "tsv")) && (params.stage == "two") ) bam_tsv_path = params.input
 if (bam_tsv_path) {
     bam_tsv_file = file(bam_tsv_path)
     input_samples = extract_bam(bam_tsv_file)
@@ -124,6 +121,7 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
 )
 
 include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_stage_two' addParams(
+    bed_to_intervals_options:             modules['bed_to_intervals'],
     bwamem1_mem_options:                  modules['bwa_mem1_mem'],
     bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
     picard_sort_mapping_options:          modules['picard_sort_bams_mapping'],
@@ -133,14 +131,22 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
 )
 
 include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'                addParams(
-    fastqc_options:                       modules['fastqc'],
-)                   
+    fastqc_options:                       modules['fastqc']
+)
+
+include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
 workflow {
-    TRIMGALORE_WF(input_samples)
-    UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
-    UMI_STAGE_TWO(UMI_STAGE_ONE.out.filtered_bam, bwa_index, fasta, fasta_fai, dict, dbsnp, dbsnp_index,UMI_STAGE_ONE.out.iv_list)
-    UMI_QC(input_samples,
+    if ( params.stage != 'two' ) {
+        TRIMGALORE_WF(input_samples)
+        UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+        filtered_bam = UMI_STAGE_ONE.out.filtered_bam
+        }
+    if ( params.stage == 'two' ) { filtered_bam = input_samples }
+    UMI_STAGE_TWO(filtered_bam, bwa_index, fasta, fasta_fai,target_bed, dict, dbsnp, dbsnp_index)
+    if ( params.stage != 'two' ) {
+        UMI_QC(
+            input_samples,
             TRIMGALORE_WF.out.trim_qc,
             multiqc_config,
             multiqc_custom_config,
@@ -151,4 +157,13 @@ workflow {
             UMI_STAGE_TWO.out.md_report,
             UMI_STAGE_TWO.out.error_rate_2
             )
+        }
+    if (params.stage == 'two') {
+            UMI_QC_2(
+            multiqc_config,
+            multiqc_custom_config,
+            UMI_STAGE_TWO.out.md_report,
+            UMI_STAGE_TWO.out.error_rate_2
+            )
+        }
 }

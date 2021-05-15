@@ -26,6 +26,11 @@
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "stage": {
+                    "type": "string",
+                    "description": "choose stage to start pipeline",
+                    "default": "\"\""
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
@@ -256,11 +261,6 @@
         }
     ],
     "properties": {
-        "stage": {
-            "type": "string",
-            "description": "choose stage to start pipeline",
-            "default": "\"\""
-        },
         "target_bed": {
             "type": "string"
         },
