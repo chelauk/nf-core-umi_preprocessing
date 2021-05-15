@@ -46,6 +46,6 @@ process FASTQC {
     """
     touch fastq.html
     touch test.zip
-    touch fastq_version.txt
+    touch fastq.version.txt
     """
 }

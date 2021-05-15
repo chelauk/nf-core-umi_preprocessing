@@ -34,6 +34,6 @@ process BED_TO_INTERVAL_LIST {
     stub:
     """
     touch interval.list
-    touch software_version.txt
+    touch software.version.txt
     """
     }

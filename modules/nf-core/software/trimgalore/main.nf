@@ -81,4 +81,11 @@ process TRIMGALORE {
         echo \$(trim_galore --version 2>&1) | sed 's/^.*version //; s/Last.*\$//' > ${software}.version.txt
         """
     }
+    stub:
+    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    """
+    ${prefix}_1.fq.gz
+    ${prefix}_2.fq.gz
+    ${prefix}_3.fq.gz
+    """
 }
