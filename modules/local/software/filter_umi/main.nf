@@ -20,8 +20,8 @@ process FILTER_UMIS {
     script:
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
-    [ ! -f  ${prefix}_1_val_1.fq.gz ] && ln -s ${reads[0]} ${prefix}_trimmed_1.fq.gz
-    [ ! -f  ${prefix}_3_val_2.fq.gz ] && ln -s ${reads[2]} ${prefix}_trimmed_3.fq.gz
+    ln -s ${reads[0]} ${prefix}_trimmed_1.fq.gz
+    ln -s ${reads[2]} ${prefix}_trimmed_3.fq.gz
     filter_umis.py -u ${prefix}_2.fq.gz -v ${prefix}_1_val_1.fq.gz
     """
 
