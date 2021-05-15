@@ -5,7 +5,8 @@ params.options = [:]
 def options    = initOptions(params.options)
 
 process BAM_TO_FASTQ {
-    tag "$meta.id"
+    scratch true
+	tag "$meta.id"
     label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -22,8 +23,11 @@ process BAM_TO_FASTQ {
 
     script:
     """
-    picard -Xmx${task.memory.toGiga()}g SamToFastq \\
-    MAX_RECORDS_IN_RAM=4000000 \\
+    mkdir tmp_dir
+    picard -Xmx${task.memory.toGiga()}g \\
+    -Djava.io.tmpdir=./tmp_dir \\
+    SamToFastq \\
+    MAX_RECORDS_IN_RAM=500000 \\
     INPUT=$bam \\
     FASTQ="${meta.id}.fastq" \\
     CLIPPING_ATTRIBUTE=XT \\
