@@ -30,5 +30,10 @@ process BED_TO_INTERVAL_LIST {
     SD=${dict} \\
     O=interval.list
     echo \$(picard  BedToIntervalList --version 2>&1) > ${software}.version.txt
-    """ 
+    """
+    stub:
+    """
+    touch interval.list
+    touch software_version.txt
+    """
     }

@@ -41,4 +41,11 @@ process FASTQC {
         fastqc --version | sed -e "s/FastQC v//g" > ${software}.version.txt
         """
     }
+
+    stub:
+    """
+    touch fastq.html
+    touch test.zip
+    touch fastq_version.txt
+    """
 }

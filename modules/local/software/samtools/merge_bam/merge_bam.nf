@@ -26,4 +26,8 @@ process SAMTOOLS_MERGE_BAM {
     samtools merge --threads ${task.cpus} temp.bam ${bam}
     samtools sort  --threads ${task.cpus} -o ${name}.bam  temp.bam
     """
+    stub:
+    """
+    touch ${name}.bam
+    """
 }

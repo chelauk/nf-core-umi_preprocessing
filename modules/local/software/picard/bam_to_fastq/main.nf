@@ -35,4 +35,8 @@ process BAM_TO_FASTQ {
     INTERLEAVE=true \\
     NON_PF=true 
     """
+    stub:
+    """
+    touch ${meta.id}.fastq
+    """
     }

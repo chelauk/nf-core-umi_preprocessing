@@ -31,5 +31,9 @@ process PICARD_SORT_BAM {
     OUTPUT=${meta.id}_sort.bam \\
     VALIDATION_STRINGENCY=LENIENT
     ${picard_opts}
-    """ 
+    """
+    stub:
+    """
+    touch ${meta.id}_sort.bam
+    """
     }

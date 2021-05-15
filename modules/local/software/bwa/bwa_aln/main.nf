@@ -38,4 +38,9 @@ process BWA_ALN {
     samtools sort --threads ${task.cpus} -m 2G -o ${meta.id}.bam
     echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//' > ${software}.version.txt
     """
+    stub:
+    """
+    touch ${meta.id}.bam
+    touch bwa_version.txt
+    """
     }

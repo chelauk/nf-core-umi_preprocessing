@@ -45,5 +45,10 @@ process PICARD_COLLECT_HS_METRICS {
     BAIT_INTERVALS=${interval_list} \\
     TARGET_INTERVALS=${interval_list} 
     echo \$(picard CollectHsMetrics --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d: > ${software}.version.txt
-    """ 
+    """
+    stub:
+    """
+    touch ${meta.id}_hs_metrics.txt
+    touch software.version.txt
+    """
     }

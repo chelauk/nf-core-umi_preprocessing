@@ -24,5 +24,11 @@ process FILTER_UMIS {
     ln -s ${reads[2]} ${prefix}_trimmed_3.fq.gz
     filter_umis.py -u ${prefix}_2.fq.gz -v ${prefix}_1_val_1.fq.gz
     """
-
+    
+    stub:
+    """
+    touch fastq_trimmed_1.fq.gz
+    touch fastq_trimmed_2.fq.gz
+    touch fastq_trimmed_3.fq.gz
+    """
 }

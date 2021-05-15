@@ -28,4 +28,8 @@ process MARK_ILLUMINA_ADAPTERS {
     OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
     M="${meta.patient}_${meta.id}_mark_adapter.metrics"
     """
+    stub:
+    """
+    touch ${meta.id}_unaln_umi_marked.bam
+    """
     }

@@ -51,4 +51,11 @@ process MARK_DUPLICATES {
         --create-output-bam-index true \\
         --spark-master local[${task.cpus}]
     """
+    stub:
+    """
+    touch ${meta.patient}_${meta.sample}.bam
+    touch ${meta.patient}_${meta.sample}.bai
+    touch ${meta.patient}_${meta.sample}.bam.metrics
+    """
+
 }
