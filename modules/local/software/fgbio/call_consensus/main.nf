@@ -6,7 +6,7 @@ def options    = initOptions(params.options)
 
 process CALL_CONSENSUS {
     tag "$meta.id"
-    label 'MEMORY_MAX'
+    label 'CALL_CONSENSUS'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
