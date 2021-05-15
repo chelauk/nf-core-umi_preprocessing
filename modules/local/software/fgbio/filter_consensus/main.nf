@@ -35,4 +35,8 @@ process FILTER_CONSENSUS {
     --max-no-call-fraction 0.1 \\
     --reverse-per-base-tags true
     """
+    stub:
+    """
+    touch ${meta.id}_cons_filt.bam
+    """
 }

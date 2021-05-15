@@ -38,4 +38,9 @@ process MULTIQC {
     """
     multiqc -f $options.args . --config $multiqc_config
     """
+    stub:
+    """
+    touch stub_multiqc_report.html
+    touch stub_data
+    """
 }

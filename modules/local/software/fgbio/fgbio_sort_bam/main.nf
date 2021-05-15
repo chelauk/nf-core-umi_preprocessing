@@ -28,4 +28,8 @@ process FGBIO_SORT_BAM {
     --sort-order TemplateCoordinate \\
     --max-records-in-ram 4000000
     """
+    stub:
+    """
+    touch ${meta.id}_sort.bam
+    """
     }

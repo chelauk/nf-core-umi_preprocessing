@@ -28,5 +28,10 @@ process GROUP_READS_BY_UMI {
     -f ${meta.patient}_${meta.sample}_aln_merged_umi.metrics \\
     -s adjacency -m 30 -t RX -T MI --min-umi-length 9 \\
     -o ${meta.patient}_${meta.sample}_umi_group.bam 
-   """
+    """
+    stub:
+    """
+    touch ${meta.patient}_${meta.sample}_umi_group.bam
+    touch ${meta.patient}_${meta.sample}_aln_merged_umi.metrics
+    """
 }

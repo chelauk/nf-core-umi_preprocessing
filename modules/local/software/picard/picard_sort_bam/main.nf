@@ -33,7 +33,9 @@ process PICARD_SORT_BAM {
     ${picard_opts}
     """
     stub:
+    picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
     """
     touch ${meta.id}_sort.bam
+    ${picard_opts}
     """
     }

@@ -29,4 +29,8 @@ process CALL_CONSENSUS {
     --min-input-base-quality 30 \\
     --tag MI
     """
+    stub:
+    """
+    touch ${meta.id}_consensus.bam
+    """
 }

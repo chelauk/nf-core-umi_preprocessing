@@ -41,6 +41,6 @@ process BWA_ALN {
     stub:
     """
     touch ${meta.id}.bam
-    touch bwa_version.txt
+    touch bwa.version.txt
     """
     }

@@ -84,8 +84,10 @@ process TRIMGALORE {
     stub:
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
-    ${prefix}_1.fq.gz
-    ${prefix}_2.fq.gz
-    ${prefix}_3.fq.gz
+    touch ${prefix}_1.fq.gz
+    touch ${prefix}_2.fq.gz
+    touch ${prefix}_3.fq.gz
+    touch ${prefix}.report.txt
+    touch ${prefix}.version.txt
     """
 }

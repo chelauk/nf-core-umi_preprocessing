@@ -35,5 +35,12 @@ process ERRORRATE_BY_READ_POSITION {
     --ref ${fasta} \\
     --variants ${dbsnp}
     """
+    stub:
+    output_options = params.second_file ? "--output ${meta.patient}_${meta.sample}_st2_qc" : "--output ${meta.patient}_${meta.sample}_st1_qc"
+    """
+    output="${output_options}"
+    touch \${output:8}.error_rate_by_read_position.txt
+    """
+
 
 }

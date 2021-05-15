@@ -34,4 +34,8 @@ process FASTQ_TO_BAM {
     --library "test" \\
     --read-group-id ${meta.patient}-${meta.id}
     """
+    stub:
+    """
+    touch ${meta.id}_unaln.bam
+    """
 }
