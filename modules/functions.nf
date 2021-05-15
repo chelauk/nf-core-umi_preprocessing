@@ -91,21 +91,16 @@ def extract_bam(tsvFile) {
     Channel.from(tsvFile)
         .splitCsv(sep: '\t')
         .map { row ->
-            check_number_of_item(row, 6)
+            check_number_of_item(row, 5)
             def meta = [:]
-
             meta.patient = row[0]
             meta.gender  = row[1]
             meta.status  = return_status(row[2].toInteger())
             meta.sample  = row[3]
             meta.id      = meta.sample
             def bam      = return_file(row[4])
-            def bai      = return_file(row[5])
-
             if (!has_extension(bam, "bam")) exit 1, "File: ${bam} has the wrong extension. See --help for more information"
-            if (!has_extension(bai, "bai")) exit 1, "File: ${bai} has the wrong extension. See --help for more information"
-
-            return [meta, bam, bai]
+            return [meta, bam]
         }
 }
 

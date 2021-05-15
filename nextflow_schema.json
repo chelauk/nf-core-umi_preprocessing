@@ -165,7 +165,7 @@
                 "max_cpus": {
                     "type": "integer",
                     "description": "Maximum number of CPUs that can be requested    for any single job.",
-                    "default": "12",
+                    "default": 12,
                     "fa_icon": "fas fa-microchip",
                     "hidden": true,
                     "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
@@ -256,6 +256,11 @@
         }
     ],
     "properties": {
+        "stage": {
+            "type": "string",
+            "description": "choose stage to start pipeline",
+            "default": "\"\""
+        },
         "target_bed": {
             "type": "string"
         },
@@ -292,7 +297,7 @@
         },
         "cpus": {
             "type": "integer",
-            "default": "6"
+            "default": 6
         },
         "single_cpu_mem": {
             "type": "string",

@@ -73,19 +73,31 @@ read_structure    = params.read_structure    ?: Channel.empty()
 params.enable_conda = false
 params.second_file  = false
 
+// initiate value channel for stage
+stage = params.stage ? params.stage : null
+
 //  include functions
 include {
-   extract_fastq;
-   has_extension
+    extract_fastq;
+    extract_bam;
+    has_extension
 } from './modules/functions'
 
 // Handle input
 tsv_path = null
-if (params.input && (has_extension(params.input, "tsv") )) tsv_path = params.input
+if (params.input && (has_extension(params.input, "tsv")) && stage != "two" ) tsv_path = params.input
 if (tsv_path) {
     tsv_file = file(tsv_path)
     input_samples = extract_fastq(tsv_file)
-}
+    }
+
+// handle bam input for stage 2
+bam_tsv_path = null
+if (params.input && (has_extension(params.input, "tsv")) && stage == "two" ) bam_tsv_path = params.input
+if (bam_tsv_path) {
+    bam_tsv_file = file(bam_tsv_path)
+    input_samples = extract_bam(bam_tsv_file)
+    }
 
 // params summary for MultiQC
 workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
@@ -129,14 +141,14 @@ workflow {
     UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
     UMI_STAGE_TWO(UMI_STAGE_ONE.out.filtered_bam, bwa_index, fasta, fasta_fai, dict, dbsnp, dbsnp_index,UMI_STAGE_ONE.out.iv_list)
     UMI_QC(input_samples,
-           TRIMGALORE_WF.out.trim_qc,
-           multiqc_config,
-           multiqc_custom_config,
-           workflow_summary,
-           UMI_STAGE_ONE.out.hs_metrics,
-           UMI_STAGE_ONE.out.error_rate,
-           UMI_STAGE_ONE.out.group_metrics,
-           UMI_STAGE_TWO.out.md_report,
-           UMI_STAGE_TWO.out.error_rate_2
-           )
+            TRIMGALORE_WF.out.trim_qc,
+            multiqc_config,
+            multiqc_custom_config,
+            workflow_summary,
+            UMI_STAGE_ONE.out.hs_metrics,
+            UMI_STAGE_ONE.out.error_rate,
+            UMI_STAGE_ONE.out.group_metrics,
+            UMI_STAGE_TWO.out.md_report,
+            UMI_STAGE_TWO.out.error_rate_2
+            )
 }
