@@ -38,7 +38,7 @@ if __name__ == '__main__':
     def list_cycle(seqid, longer_list):
         for (seqid2, header2, seq2, qualscores2) in longer_list:
             if seqid == seqid2:
-                qout.write(header2.encode('utf-8') + seq2 + b"+\n" + qualscores2)
+                qout.write(header2.encode('utf-8') + b"\n" + seq2 + b"+\n" + qualscores2)
                 return True
         return False
 
