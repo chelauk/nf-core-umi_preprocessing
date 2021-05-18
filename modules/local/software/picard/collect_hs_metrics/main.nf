@@ -41,7 +41,7 @@ process PICARD_COLLECT_HS_METRICS {
     R=${fasta} \\
     ${options.args} \\
     I=${bam} \\
-    O=${meta.id}_hs_metrics.txt \\
+    O=${meta.patient}_${meta.id}_hs_metrics_2.txt \\
     BAIT_INTERVALS=${interval_list} \\
     TARGET_INTERVALS=${interval_list} 
     echo \$(picard CollectHsMetrics --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d: > ${software}.version.txt

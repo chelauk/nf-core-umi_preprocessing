@@ -24,7 +24,7 @@ process PICARD_COLLECT_HS_METRICS_2 {
     path interval_list
 
     output:
-    tuple val(meta), file("*metrics.txt" ), emit: hs_metrics
+    tuple val(meta), file("*metrics.txt" ), emit: hs_metrics_2
     path  "*.version.txt"                 , emit: version
 
     script:
@@ -41,7 +41,7 @@ process PICARD_COLLECT_HS_METRICS_2 {
     R=${fasta} \\
     ${options.args} \\
     I=${bam} \\
-    O=${meta.id}_md_hs_metrics.txt \\
+    O=${meta.patient}_${meta.id}_2_md_hs_metrics.txt \\
     BAIT_INTERVALS=${interval_list} \\
     TARGET_INTERVALS=${interval_list} 
     echo \$(picard CollectHsMetrics --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d: > ${software}.version.txt

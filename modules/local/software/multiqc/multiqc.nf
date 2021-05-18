@@ -6,6 +6,7 @@ def options    = initOptions(params.options)
 
 process MULTIQC {
     echo true
+    cache false
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -20,11 +21,13 @@ process MULTIQC {
     path  workflow_summary
     path ('fastqc/*')
     path ('trim_galore/*')
-    path ('hs_metrics/*')
+    path ('hs_metrics_1/*')
     path ('error_rate/*')
     path ('group_metrics/*')
     path ('md_metrics/*')
     path ('error_rate_2/*')
+    path ('hs_metrics_2/*')
+    path ('bamqc_out/*')
 
     output:
     path "*multiqc_report.html", emit: report

@@ -8,7 +8,7 @@ include { PICARD_SORT_BAM as SORT_BAM_TWO } from '../../software/picard/picard_s
 include { PICARD_MERGE_BAMS }               from '../../software/picard/picard_merge_bams/main'    addParams(options: params.picard_merge_bams_options)
 include { PICARD_COLLECT_HS_METRICS_2 }     from '../../software/picard/collect_hs_metrics_2/main' addParams(options: params.collect_hs_metrics_options)
 include { MARK_DUPLICATES }                 from '../../software/gatk/markduplicates/main'         addParams(options: params.gatk_mark_duplicates_options)
-include { QUALIMAP_BAMQC }                  from '../../../nf-core/software/qualimap/bamqc/main'   addParams(options: params.bamqc_options)
+include { QUALIMAP_BAMQC }                  from '../../../nf-core/software/qualimap/bamqc/main'   addParams(options: params.qualimap_bamqc_mapping_options)
 include { ERRORRATE_BY_READ_POSITION }      from '../../software/fgbio/error_rate/main'            addParams(options: params.error_rate_options, second_file: true)
 
 workflow UMI_STAGE_TWO {
@@ -60,5 +60,7 @@ workflow UMI_STAGE_TWO {
     emit:
     error_rate_2 = ERRORRATE_BY_READ_POSITION.out
     md_report    = MARK_DUPLICATES.out.report
+    hs_metrics_2 = PICARD_COLLECT_HS_METRICS_2.out.hs_metrics_2
+    bamqc_out    = QUALIMAP_BAMQC.out.results
 
 }

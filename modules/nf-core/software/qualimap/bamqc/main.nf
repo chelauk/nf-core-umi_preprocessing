@@ -32,7 +32,7 @@ process QUALIMAP_BAMQC {
 
     def collect_pairs = meta.single_end ? '' : '--collect-overlap-pairs'
     def memory     = task.memory.toGiga() + "G"
-    def regions = use_gff ? "--gff $gff" : ''
+    def regions = target_bed ? "--gff $target_bed" : ''
 
     def strandedness = 'non-strand-specific'
     if (meta.strandedness == 'forward') {
@@ -56,5 +56,11 @@ process QUALIMAP_BAMQC {
         -nt $task.cpus
 
     echo \$(qualimap 2>&1) | sed 's/^.*QualiMap v.//; s/Built.*\$//' > ${software}.version.txt
+    """
+    stub:
+    prefix         = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    """
+    mkdir $prefix
+    touch qualimap.version.txt
     """
 }
