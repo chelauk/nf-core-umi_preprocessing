@@ -1,4 +1,4 @@
-# umi_variant_calling : Output <!-- omit in toc -->
+# nf-core-umi_preprocessing : Output <!-- omit in toc -->
 
 This document describes the output produced by the pipeline.
 
