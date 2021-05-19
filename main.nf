@@ -127,6 +127,7 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
     picard_sort_mapping_options:          modules['picard_sort_bams_mapping'],
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
     gatk_mark_duplicates_options:         modules['markduplicates'],
+    collect_hs_metrics_options:           modules['picard_hs_metrics'],
     error_rate_options:                   modules['fgbio_error_rate']
 )
 
