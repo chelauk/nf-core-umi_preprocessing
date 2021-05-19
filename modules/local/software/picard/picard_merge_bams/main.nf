@@ -39,7 +39,7 @@ process PICARD_MERGE_BAMS {
     ${options.args} \\
     UNMAPPED_BAM=${unaligned_marked_bam} \\
     ALIGNED_BAM=${aligned_unmarked_sam} \\
-    O="${meta.id}.merged.bam" \\
+    O="${patient.id}_${meta.id}.merged.bam" \\
     ADD_MATE_CIGAR=true CLIP_ADAPTERS=false \\
     CLIP_OVERLAPPING_READS=true INCLUDE_SECONDARY_ALIGNMENTS=true \\
     MAX_INSERTIONS_OR_DELETIONS=-1 PRIMARY_ALIGNMENT_STRATEGY=MostDistant \\

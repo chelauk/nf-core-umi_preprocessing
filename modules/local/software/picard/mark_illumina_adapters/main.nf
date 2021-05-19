@@ -25,7 +25,7 @@ process MARK_ILLUMINA_ADAPTERS {
     picard -Xmx${task.memory.toGiga()}g  MarkIlluminaAdapters \\
     MAX_RECORDS_IN_RAM=4000000 \\
     INPUT=$bam \\
-    OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
+    OUTPUT="${meta.patient}_${meta.id}_unaln_umi_marked.bam" \\
     M="${meta.patient}_${meta.id}_mark_adapter.metrics"
     """
     stub:
