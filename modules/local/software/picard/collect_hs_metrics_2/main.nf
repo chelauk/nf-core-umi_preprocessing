@@ -24,7 +24,7 @@ process PICARD_COLLECT_HS_METRICS_2 {
     path interval_list
 
     output:
-    tuple val(meta), file("*metrics.txt" ), emit: hs_metrics
+    tuple val(meta), file("*metrics.txt" ), emit: md_hs_metrics
     path  "*.version.txt"                 , emit: version
 
     script:
