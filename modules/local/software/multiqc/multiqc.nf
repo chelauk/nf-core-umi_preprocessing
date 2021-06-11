@@ -21,6 +21,7 @@ process MULTIQC {
     path ('fastqc/*')
     path ('trim_galore/*')
     path ('hs_metrics/*')
+    path ('md_hs_metrics/*')
     path ('error_rate/*')
     path ('group_metrics/*')
     path ('md_metrics/*')
