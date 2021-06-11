@@ -153,6 +153,7 @@ workflow {
             multiqc_custom_config,
             workflow_summary,
             UMI_STAGE_ONE.out.hs_metrics,
+            UMI_STAGE_TWO.out.md_hs_metrics,
             UMI_STAGE_ONE.out.error_rate,
             UMI_STAGE_ONE.out.group_metrics,
             UMI_STAGE_TWO.out.md_report,
