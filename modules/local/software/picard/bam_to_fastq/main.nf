@@ -25,10 +25,10 @@ process BAM_TO_FASTQ {
     """
     mkdir tmp_dir
     picard -Xmx${task.memory.toGiga()}g \\
-    -Djava.io.tmpdir=./tmp_dir \\
-    SamToFastq \\
+	SamToFastq \\
     MAX_RECORDS_IN_RAM=500000 \\
-    INPUT=$bam \\
+    TMP_DIR=./tmp_dir \\
+	INPUT=$bam \\
     FASTQ="${meta.id}.fastq" \\
     CLIPPING_ATTRIBUTE=XT \\
     CLIPPING_ACTION=2 \\
