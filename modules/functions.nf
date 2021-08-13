@@ -123,7 +123,7 @@ def extract_fastq_from_dir(folder) {
         meta.gender  = 'ZZ' // unused
         meta.status  = 0    // normal (not tumor)
         meta.run     = run
-        meta.id      = "${meta.sample}-${meta.run}"
+        meta.id      = "${meta.patient}-${meta.sample}"
         def read1    = pair[0]
         def read2    = pair[1]
 
