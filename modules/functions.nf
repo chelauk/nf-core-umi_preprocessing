@@ -144,7 +144,7 @@ def extract_fastq(tsvFile) {
             meta.status  = return_status(row[2].toInteger())
             meta.sample  = row[3]
             meta.run     = row[4]
-            meta.id      = "${meta.sample}-${meta.run}"
+            meta.id      = "${meta.patient}-${meta.sample}"
             def read1    = return_file(row[5])
             def read2    = "null"
             def read3    = "null"
