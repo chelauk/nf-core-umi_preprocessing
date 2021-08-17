@@ -24,7 +24,7 @@ process BWA_ALN {
     path fai
 
     output:
-    tuple val(meta), file("*bam"), emit: bam
+    tuple meta, file("*bam"), emit: bam
     path  "*.version.txt"   , emit: version
 
     script:
