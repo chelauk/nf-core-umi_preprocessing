@@ -20,7 +20,7 @@ process MARK_DUPLICATES {
     output:
     tuple val(meta), path("*bam"), emit: md_bam
     tuple val(meta), path("*bai"), emit: md_bai
-    val meta,                          emit: tsv
+    val (meta),                          emit: tsv
     tuple val(meta), path("*.metrics"),     emit: report
 
     script:

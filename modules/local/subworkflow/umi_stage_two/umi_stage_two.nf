@@ -58,9 +58,8 @@ workflow UMI_STAGE_TWO {
     ERRORRATE_BY_READ_POSITION(MARK_DUPLICATES.out.md_bam,fasta,dict,dbsnp,dbsnp_index,BED_TO_INTERVAL_LIST.out.interval_list)
 
     emit:
-    error_rate_2 = ERRORRATE_BY_READ_POSITION.out
-    md_report    = MARK_DUPLICATES.out.report
-    hs_metrics_2 = PICARD_COLLECT_HS_METRICS_2.out.hs_metrics_2
-    bamqc_out    = QUALIMAP_BAMQC.out.results
+    error_rate_2  = ERRORRATE_BY_READ_POSITION.out
+    md_hs_metrics = PICARD_COLLECT_HS_METRICS_2.out.md_hs_metrics
+    md_report     = MARK_DUPLICATES.out.report
 
 }
