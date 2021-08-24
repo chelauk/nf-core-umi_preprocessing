@@ -16,6 +16,7 @@ process FASTQ_TO_BAM {
 
     input:
     tuple val(meta), path(reads)
+    val library
     val rstructure 
 
     output:
@@ -28,11 +29,9 @@ process FASTQ_TO_BAM {
     --input $reads \\
     --output ${meta.id}_unaln.bam \\
     --read-structures $rstructure \\
-    --sort true \\
     --umi-tag RX \\
     --sample ${meta.id} \\
-    --library "test" \\
-    --read-group-id ${meta.patient}-${meta.id}
+    --library $library
     """
     stub:
     """

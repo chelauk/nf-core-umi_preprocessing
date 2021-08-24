@@ -70,6 +70,7 @@ target_bed        = params.target_bed        ? file(params.target_bed)        : 
 // Initialize value channels based on params, not defined within the params.genomes[params.genome] scope
 min_reads         = params.min_reads         ?: Channel.empty()  // this the minimum reads parameter passed to FilterConsensusReads
 read_structure    = params.read_structure    ?: Channel.empty()
+library           = params.library           ?: Channel.empty()
 params.enable_conda = false
 params.second_file  = false
 
@@ -140,7 +141,7 @@ include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 workflow {
     if ( params.stage != 'two' ) {
         TRIMGALORE_WF(input_samples)
-        UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+        UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
         filtered_bam = UMI_STAGE_ONE.out.filtered_bam
         }
     if ( params.stage == 'two' ) { filtered_bam = input_samples }

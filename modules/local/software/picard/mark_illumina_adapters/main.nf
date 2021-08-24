@@ -18,7 +18,7 @@ process MARK_ILLUMINA_ADAPTERS {
 
     output:
     tuple val(meta), file("*bam"), emit : bam
-    //path "*_mark_adapter.metrics", emit: mark_adaptor_log
+    path "*_mark_adapter.metrics", emit: mark_adaptor_log
 
     script:
     """
@@ -26,7 +26,7 @@ process MARK_ILLUMINA_ADAPTERS {
     MAX_RECORDS_IN_RAM=4000000 \\
     INPUT=$bam \\
     OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
-    M="${meta.patient}_${meta.id}_mark_adapter.metrics"
+    M="${meta.id}_mark_adapter.metrics"
     """
     stub:
     """

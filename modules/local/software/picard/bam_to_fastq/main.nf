@@ -19,7 +19,7 @@ process BAM_TO_FASTQ {
     tuple val(meta), file(bam)
 
     output:
-    tuple val(meta), file("*fastq"), emit: fastq
+    tuple val(meta), file("*fastq.gz"), emit: fastq
 
     script:
     """
@@ -29,7 +29,7 @@ process BAM_TO_FASTQ {
     MAX_RECORDS_IN_RAM=500000 \\
     TMP_DIR=./tmp_dir \\
 	INPUT=$bam \\
-    FASTQ="${meta.id}.fastq" \\
+    FASTQ="${meta.id}.fastq.gz" \\
     CLIPPING_ATTRIBUTE=XT \\
     CLIPPING_ACTION=2 \\
     INTERLEAVE=true \\
