@@ -18,7 +18,7 @@ process MARK_ILLUMINA_ADAPTERS {
 
     output:
     tuple val(meta), file("*bam"), emit : bam
-    path "*_mark_adapter.metrics", emit: mark_adaptor_log
+    tuple val(meta), file("*_mark_adapter.metrics"), emit: mark_adaptor_log
 
     script:
     """
