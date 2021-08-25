@@ -28,6 +28,8 @@ process FASTQ_TO_BAM {
     fgbio -Xmx${task.memory.toGiga()}g --tmp-dir=./temp FastqToBam \\
     --input $reads \\
     --output ${meta.id}_unaln.bam \\
+    --sort true \\:wq
+    
     --read-structures $rstructure \\
     --umi-tag RX \\
     --sample ${meta.id} \\
