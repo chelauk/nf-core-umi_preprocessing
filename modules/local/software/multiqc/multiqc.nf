@@ -47,3 +47,4 @@ process MULTIQC {
     touch stub_data
     """
 }
+
