@@ -6,7 +6,6 @@ def options    = initOptions(params.options)
 
 process MULTIQC {
     echo true
-    cache false
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
