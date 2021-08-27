@@ -145,7 +145,7 @@ def extract_fastq(tsvFile) {
             meta.sample  = row[3]
             meta.run     = row[4]
             meta.id      = "${meta.patient}-${meta.sample}"
-			def read1    = return_file(row[5])
+            def read1    = return_file(row[5])
             def read2    = "null"
             def read3    = "null"
             if (has_extension(read1, "fastq.gz") || has_extension(read1, "fq.gz") || has_extension(read1, "fastq") || has_extension(read1, "fq")) {
