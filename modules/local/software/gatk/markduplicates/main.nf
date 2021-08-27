@@ -18,10 +18,10 @@ process MARK_DUPLICATES {
     tuple val(meta), file(bam)
 
     output:
-    tuple val(meta), path("*bam"), emit: md_bam
-    tuple val(meta), path("*bai"), emit: md_bai
-    val meta,                          emit: tsv
-    tuple meta, path("*.metrics"),     emit: report
+    tuple val(meta), path("*bam"),      emit: md_bam
+    tuple val(meta), path("*bai"),      emit: md_bai
+    val (meta),                         emit: tsv
+    tuple val(meta), path("*.metrics"), emit: report
 
     script:
     markdup_java_options = task.memory.toGiga() < 8 ? params.markdup_java_options : "\"-Xms" +  (task.memory.toGiga() / 2).trunc() + "g -Xmx" + (task.memory.toGiga() - 1) + "g\""

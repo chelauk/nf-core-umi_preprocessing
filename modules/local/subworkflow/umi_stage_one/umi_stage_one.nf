@@ -21,6 +21,7 @@ include { FILTER_CONSENSUS }           from '../../software/fgbio/filter_consens
 workflow UMI_STAGE_ONE {
     take:
     input_samples
+    library
     read_structure
     bwa_index
     fasta
@@ -33,7 +34,7 @@ workflow UMI_STAGE_ONE {
 
     main:
     BED_TO_INTERVAL_LIST(target_bed, dict)
-    FASTQ_TO_BAM(input_samples, read_structure)
+    FASTQ_TO_BAM(input_samples, library, read_structure)
     MARK_ILLUMINA_ADAPTERS(FASTQ_TO_BAM.out.bam)
     BAM_TO_FASTQ(MARK_ILLUMINA_ADAPTERS.out.bam)
     BWA_ALN(BAM_TO_FASTQ.out.fastq,bwa_index,fasta,fasta_fai)

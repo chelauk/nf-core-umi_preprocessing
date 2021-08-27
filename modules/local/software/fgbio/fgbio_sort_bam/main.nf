@@ -26,7 +26,7 @@ process FGBIO_SORT_BAM {
     -i $bam \\
     -o ${meta.id}_sort.bam \\
     --sort-order TemplateCoordinate \\
-    --max-records-in-ram 4000000
+    --max-records-in-ram 8000000
     """
     stub:
     """
