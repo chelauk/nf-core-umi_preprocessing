@@ -13,7 +13,7 @@ include { PICARD_MERGE_BAMS }          from '../../software/picard/picard_merge_
 include { MERGE_RUNS}                  from '../../subworkflow/merge_runs/main'                 addParams(options: params.merge_runs_mapping_options)
 include { PICARD_COLLECT_HS_METRICS }  from '../../software/picard/collect_hs_metrics/main'     addParams(options: params.collect_hs_metrics_options)
 include { ERRORRATE_BY_READ_POSITION } from '../../software/fgbio/error_rate/main'              addParams(options: params.error_rate_options)
-include { GROUP_READS_BY_UMI }         from '../../software/fgbio/group_reads_by_umi/main'      addParams(options: params.group_reads_by_umi_options)
+include { GROUP_READS_BY_UMI }         from '../../software/fgbio/group_reads_by_umi/main'      addParams(options: params.group_reads_mapping_options)
 include { FGBIO_SORT_BAM }             from '../../software/fgbio/fgbio_sort_bam/main'          addParams(options: params.fgbio_sort_mapping_options)
 include { CALL_CONSENSUS }             from '../../software/fgbio/call_consensus/main'          addParams(options: params.fgbio_call_consensus_mapping_options)
 include { FILTER_CONSENSUS }           from '../../software/fgbio/filter_consensus/main'        addParams(options: params.fgbio_filter_mapping_options)
