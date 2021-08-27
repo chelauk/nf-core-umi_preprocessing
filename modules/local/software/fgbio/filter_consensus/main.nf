@@ -20,7 +20,7 @@ process FILTER_CONSENSUS {
     val min_reads
 
     output:
-    tuple meta, file("*_filt.bam")
+    tuple val(meta), file("*_filt.bam")
 
     script:
     """
