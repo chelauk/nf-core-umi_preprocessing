@@ -37,6 +37,6 @@ process BAM_TO_FASTQ {
     """
     stub:
     """
-    touch ${meta.id}.fastq
+    touch ${meta.id}.fastq.gz
     """
     }

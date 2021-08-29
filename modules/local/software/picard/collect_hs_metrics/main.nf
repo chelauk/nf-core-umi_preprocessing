@@ -5,8 +5,7 @@ params.options = [:]
 def options    = initOptions(params.options)
 
 process PICARD_COLLECT_HS_METRICS {
-    tag "${meta.id}"
-
+    tag "$meta.id"
     label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -17,7 +16,6 @@ process PICARD_COLLECT_HS_METRICS {
 
     input:
     tuple val(meta), file(bam)
-    //path interval_list
     path fasta
     path fai
     path dict
@@ -41,14 +39,14 @@ process PICARD_COLLECT_HS_METRICS {
     R=${fasta} \\
     ${options.args} \\
     I=${bam} \\
-    O=${meta.id}_hs_metrics.txt \\
+    O="${meta.id}_hs_metrics.txt" \\
     BAIT_INTERVALS=${interval_list} \\
     TARGET_INTERVALS=${interval_list} 
     echo \$(picard CollectHsMetrics --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d: > ${software}.version.txt
     """
     stub:
     """
-    touch ${meta.id}_hs_metrics.txt
+    touch "${meta.id}_hs_metrics.txt"
     touch software.version.txt
     """
     }
