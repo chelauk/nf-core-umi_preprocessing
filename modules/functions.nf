@@ -97,7 +97,7 @@ def extract_bam(tsvFile) {
             meta.gender  = row[1]
             meta.status  = return_status(row[2].toInteger())
             meta.sample  = row[3]
-            meta.id      = "${meta.patient}-${meta.sample}"
+            meta.id      = "${meta.patient}_${meta.sample}"
             def bam      = return_file(row[4])
             if (!has_extension(bam, "bam")) exit 1, "File: ${bam} has the wrong extension. See --help for more information"
             return [meta, bam]
@@ -123,7 +123,7 @@ def extract_fastq_from_dir(folder) {
         meta.gender  = 'ZZ' // unused
         meta.status  = 0    // normal (not tumor)
         meta.run     = run
-        meta.id      = "${meta.patient}-${meta.sample}"
+        meta.id      = "${meta.patient}_${meta.sample}"
         def read1    = pair[0]
         def read2    = pair[1]
 
@@ -144,7 +144,7 @@ def extract_fastq(tsvFile) {
             meta.status  = return_status(row[2].toInteger())
             meta.sample  = row[3]
             meta.run     = row[4]
-            meta.id      = "${meta.patient}-${meta.sample}"
+            meta.id      = "${meta.patient}_${meta.sample}"
             def read1    = return_file(row[5])
             def read2    = "null"
             def read3    = "null"
