@@ -33,7 +33,7 @@ workflow MERGE_RUNS {
             meta.sample = sample
             meta.gender = gender[0]
             meta.status = status[0]
-            meta.id = "${patient}-${sample}"
+            meta.id = "${patient}_${sample}"
 
             [meta, bam[0]]
         }
@@ -46,7 +46,7 @@ workflow MERGE_RUNS {
             meta.sample = sample
             meta.gender = gender[0]
             meta.status = status[0]
-            meta.id = "${patient}-${sample}"
+            meta.id = "${patient}_${sample}"
 
             [meta, bam]
         }
