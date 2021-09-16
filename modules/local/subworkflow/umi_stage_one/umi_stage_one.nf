@@ -6,6 +6,7 @@
 
 include { BED_TO_INTERVAL_LIST }       from '../../software/picard/bed_to_interval_list/main'   addParams(options: params.bed_to_intervals_options)
 include { FASTQ_TO_BAM }               from '../../software/fgbio/fastq_to_bam/main'            addParams(options: params.fastq_to_bam_options)
+include { PICARD_ESTIMATELIBRARYCOMPLEXITY } from '../../software/picard/estimatelibrarycomplexity/main' addParams(options: params.estimate_complexity_options)
 include { MARK_ILLUMINA_ADAPTERS }     from '../../software/picard/mark_illumina_adapters/main' addParams(options: params.mark_adapters_options)
 include { BAM_TO_FASTQ }               from '../../software/picard/bam_to_fastq/main'           addParams(options: params.bam_to_fastq_options)
 include { BWA_ALN }                    from '../../software/bwa/bwa_aln/main'                   addParams(options: params.bwamem1_mem_options)
@@ -35,6 +36,7 @@ workflow UMI_STAGE_ONE {
     main:
     BED_TO_INTERVAL_LIST(target_bed, dict)
     FASTQ_TO_BAM(input_samples, library, read_structure)
+    PICARD_ESTIMATELIBRARYCOMPLEXITY(FASTQ_TO_BAM.out.bam)
     MARK_ILLUMINA_ADAPTERS(FASTQ_TO_BAM.out.bam)
     BAM_TO_FASTQ(MARK_ILLUMINA_ADAPTERS.out.bam)
     BWA_ALN(BAM_TO_FASTQ.out.fastq,bwa_index,fasta,fasta_fai)

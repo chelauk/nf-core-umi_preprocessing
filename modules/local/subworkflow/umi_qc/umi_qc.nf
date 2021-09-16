@@ -12,7 +12,7 @@ qc_reports          = Channel.empty()
 workflow UMI_QC {
     take:
     input_samples
-    trimmed_samples
+//    trimmed_samples
     multiqc_config
     multiqc_custom_config
     workflow_summary
@@ -29,7 +29,7 @@ workflow UMI_QC {
             multiqc_custom_config.ifEmpty([]),
             workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'),
             FASTQC.out.zip.collect{it[1]}.ifEmpty([]),
-            trimmed_samples.collect{it[1]}.ifEmpty([]),
+//            trimmed_samples.collect{it[1]}.ifEmpty([]),
             hs_metrics.collect{it[1]}.ifEmpty([]),
             md_hs_metrics.collect{it[1]}.ifEmpty([]),
             group_metrics.collect{it[1]}.ifEmpty([]),

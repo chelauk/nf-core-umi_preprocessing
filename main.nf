@@ -141,8 +141,8 @@ include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
 workflow {
     if ( params.stage != 'two' ) {
-        TRIMGALORE_WF(input_samples)
-        UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+//        TRIMGALORE_WF(input_samples)
+        UMI_STAGE_ONE(input_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
         filtered_bam = UMI_STAGE_ONE.out.filtered_bam
         }
     if ( params.stage == 'two' ) { filtered_bam = input_samples }
@@ -150,7 +150,7 @@ workflow {
     if ( params.stage != 'two' ) {
         UMI_QC(
             input_samples,
-            TRIMGALORE_WF.out.trim_qc,
+//            TRIMGALORE_WF.out.trim_qc,
             multiqc_config,
             multiqc_custom_config,
             workflow_summary,
