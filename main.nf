@@ -109,6 +109,7 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
     bed_to_intervals_options:             modules['bed_to_intervals'],
     bwamem1_mem_options:                  modules['bwa_mem1_mem'],
     fastq_to_bam_options:                 modules['fastq_to_bam_mapping'],
+    estimate_complexity_options           modules['estimate_complexity']
     mark_adapters_options:                modules['mark_illumina_adapters_mapping'],
     bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
