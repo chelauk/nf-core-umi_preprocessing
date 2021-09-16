@@ -49,3 +49,4 @@ process PICARD_ESTIMATELIBRARYCOMPLEXITY {
     touch ${prefix}.library_complexity.txt 
     echo 2.6.2 > ${software}.version.txt
     """
+}
