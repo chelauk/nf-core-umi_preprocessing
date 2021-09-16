@@ -26,7 +26,7 @@ process MARK_ILLUMINA_ADAPTERS {
     MAX_RECORDS_IN_RAM=4000000 \\
     INPUT=$bam \\
     OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
-    M="${meta.id}_mark_adapter.metrics"
+    METRICS="${meta.id}_mark_adapter.metrics"
     """
     stub:
     """
