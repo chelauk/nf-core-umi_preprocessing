@@ -133,7 +133,8 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
 )
 
 include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'                addParams(
-    fastqc_options:                       modules['fastqc']
+    fastqc_options:                       modules['fastqc'],
+	multiqc_options:                      modules['multiqc']
 )
 
 include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
