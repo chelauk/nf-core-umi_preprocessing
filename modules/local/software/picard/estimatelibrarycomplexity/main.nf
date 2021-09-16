@@ -1,8 +1,8 @@
-/ Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from '../functions'
+// Import generic module functions
+include { initOptions; saveFiles; getSoftwareName } from './functions'
 
-params.options = [:]
-options        = initOptions(params.options)
+params.options = [:] 
+def options    = initOptions(params.options)
 
 process PICARD_ESTIMATELIBRARYCOMPLEXITY {
     tag "$meta.id"

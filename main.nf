@@ -101,15 +101,16 @@ if (bam_tsv_path) {
 workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
 workflow_summary = Channel.value(workflow_summary)
 
-include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf/trimgalore_wf' addParams (
-    trimgalore_options:                   modules['trimgalore'],
-    trim_umi_options:                     modules['trim_umi']
-	)
+//include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf/trimgalore_wf' addParams (
+//    trimgalore_options:                   modules['trimgalore'],
+//    trim_umi_options:                     modules['trim_umi']
+//	)
+
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
     bed_to_intervals_options:             modules['bed_to_intervals'],
     bwamem1_mem_options:                  modules['bwa_mem1_mem'],
     fastq_to_bam_options:                 modules['fastq_to_bam_mapping'],
-    estimate_complexity_options           modules['estimate_complexity']
+    estimate_complexity_options:          modules['estimate_complexity'],
     mark_adapters_options:                modules['mark_illumina_adapters_mapping'],
     bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
