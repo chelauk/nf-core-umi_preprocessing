@@ -22,7 +22,12 @@ process CALL_CONSENSUS {
 
     script:
     """
-    fgbio -Xmx${task.memory.toGiga()}g -XX:+AggressiveOpts -XX:+AggressiveHeap CallMolecularConsensusReads \\
+    fgbio -Xmx${task.memory.toGiga()}g \\
+    -XX:+AggressiveOpts \\
+    -XX:+AggressiveHeap \\
+    -Dsamjdk.use_async_io_read_samtools=true \\
+    -Dsamjdk.use_async_io_write_samtools=true \\
+    CallMolecularConsensusReads \\
     -i $bam \\
     -o ${meta.id}_consensus.bam \\
     --min-reads 1 \\
