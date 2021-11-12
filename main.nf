@@ -118,6 +118,7 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
     collect_hs_metrics_options:           modules['picard_hs_metrics'],
     error_rate_options:                   modules['fgbio_error_rate'],
     group_reads_mapping_options:          modules['group_reads_mapping'],
+    fgbio_collect_duplex_seq_metrics:     modules['fgbio_collect_duplex_seq_metrics'],
     fgbio_sort_mapping_options:           modules['fgbio_sort_mapping'],
     fgbio_call_consensus_mapping_options: modules['fgbio_call_consensus_mapping'],
     fgbio_filter_mapping_options:         modules['fgbio_filter_mapping']
