@@ -46,7 +46,7 @@ workflow UMI_STAGE_ONE {
     PICARD_COLLECT_HS_METRICS(MERGE_RUNS.out.bam_mapped, fasta, fasta_fai, dict, BED_TO_INTERVAL_LIST.out.interval_list)
     ERRORRATE_BY_READ_POSITION(MERGE_RUNS.out.bam_mapped,fasta,dict,dbsnp,dbsnp_index,BED_TO_INTERVAL_LIST.out.interval_list)
     GROUP_READS_BY_UMI(MERGE_RUNS.out)
-    COLLECT_DUPLEX_SEQ_METRICS(GROUP_READS_BY_UMI.out.bam)
+    COLLECT_DUPLEX_SEQ_METRICS(GROUP_READS_BY_UMI.out.bam,BED_TO_INTERVAL_LIST.out.interval_list)
     FGBIO_SORT_BAM(GROUP_READS_BY_UMI.out.bam)
     CALL_CONSENSUS(FGBIO_SORT_BAM.out)
     FILTER_CONSENSUS(CALL_CONSENSUS.out,fasta, min_reads)

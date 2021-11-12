@@ -23,6 +23,7 @@ process MULTIQC {
     path ('md_hs_metrics/*')
     path ('error_rate/*')
     path ('group_metrics/*')
+	path ('duplex_seq_metrics/*')
     path ('md_metrics/*')
     path ('error_rate_2/*')
 
