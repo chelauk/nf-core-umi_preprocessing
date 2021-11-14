@@ -32,7 +32,7 @@ workflow UMI_QC {
             hs_metrics.collect{it[1]}.ifEmpty([]),
             md_hs_metrics.collect{it[1]}.ifEmpty([]),
             group_metrics.collect{it[1]}.ifEmpty([]),
-            duplex_seq_metrics.collect{it[1].ifEmpty([])},
+            duplex_seq_metrics.collect{it[1]}.ifEmpty([]),
             md_report.collect{it[1]}.ifEmpty([]),
             error_rate.collect{it[1]}.ifEmpty([]),
             error_rate_2.collect{it[1]}.ifEmpty([]))
