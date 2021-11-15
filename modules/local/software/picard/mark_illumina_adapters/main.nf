@@ -31,5 +31,7 @@ process MARK_ILLUMINA_ADAPTERS {
     stub:
     """
     touch ${meta.id}_unaln_umi_marked.bam
-    """
+    touch ${meta.id}_mark_adapter.metrics
+	"""
     }
+

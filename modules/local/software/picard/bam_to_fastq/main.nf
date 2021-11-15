@@ -7,7 +7,7 @@ def options    = initOptions(params.options)
 process BAM_TO_FASTQ {
     scratch true
 	tag "$meta.id"
-    label 'process_high'
+    label 'process_max'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
@@ -37,6 +37,6 @@ process BAM_TO_FASTQ {
     """
     stub:
     """
-    touch ${meta.id}.fastq
+    touch ${meta.id}.fastq.gz
     """
     }
