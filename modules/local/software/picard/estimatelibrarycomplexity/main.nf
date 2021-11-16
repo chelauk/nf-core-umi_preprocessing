@@ -38,6 +38,7 @@ process PICARD_ESTIMATELIBRARYCOMPLEXITY {
     picard -Xmx${avail_mem}g \\
     EstimateLibraryComplexity \\
     --INPUT  $bam \\
+    --BARCODE_TAG RX \\
     --OUTPUT ${prefix}.library_complexity.txt 
     echo \$(picard EstimateLibraryComplexity --version 2>&1) | sed 's/^.*Version://' > ${software}.version.txt
     """
