@@ -15,7 +15,6 @@ include { MERGE_RUNS}                  from '../../subworkflow/merge_runs/main' 
 include { PICARD_COLLECT_HS_METRICS }  from '../../software/picard/collect_hs_metrics/main'     addParams(options: params.collect_hs_metrics_options)
 include { ERRORRATE_BY_READ_POSITION } from '../../software/fgbio/error_rate/main'              addParams(options: params.error_rate_options)
 include { GROUP_READS_BY_UMI }         from '../../software/fgbio/group_reads_by_umi/main'      addParams(options: params.group_reads_mapping_options)
-//include { COLLECT_DUPLEX_SEQ_METRICS } from '../../software/fgbio/collect_duplex_seq_metrics/main' addParams(options: params.fgbio_sort_mapping_options) 
 include { FGBIO_SORT_BAM }             from '../../software/fgbio/fgbio_sort_bam/main'          addParams(options: params.fgbio_sort_mapping_options)
 include { CALL_CONSENSUS }             from '../../software/fgbio/call_consensus/main'          addParams(options: params.fgbio_call_consensus_mapping_options)
 include { FILTER_CONSENSUS }           from '../../software/fgbio/filter_consensus/main'        addParams(options: params.fgbio_filter_mapping_options)
@@ -46,7 +45,6 @@ workflow UMI_STAGE_ONE {
     PICARD_COLLECT_HS_METRICS(MERGE_RUNS.out.bam_mapped, fasta, fasta_fai, dict, BED_TO_INTERVAL_LIST.out.interval_list)
     ERRORRATE_BY_READ_POSITION(MERGE_RUNS.out.bam_mapped,fasta,dict,dbsnp,dbsnp_index,BED_TO_INTERVAL_LIST.out.interval_list)
     GROUP_READS_BY_UMI(MERGE_RUNS.out)
-//   COLLECT_DUPLEX_SEQ_METRICS(GROUP_READS_BY_UMI.out.bam,BED_TO_INTERVAL_LIST.out.interval_list)
     FGBIO_SORT_BAM(GROUP_READS_BY_UMI.out.bam)
     CALL_CONSENSUS(FGBIO_SORT_BAM.out)
     FILTER_CONSENSUS(CALL_CONSENSUS.out,fasta, min_reads)
@@ -56,7 +54,6 @@ workflow UMI_STAGE_ONE {
     complexity          = PICARD_ESTIMATELIBRARYCOMPLEXITY.out.metrics
     hs_metrics          = PICARD_COLLECT_HS_METRICS.out.hs_metrics
     error_rate          = ERRORRATE_BY_READ_POSITION.out.error_rate
-//    duplex_seq_metrics  = COLLECT_DUPLEX_SEQ_METRICS.out.metrics
     group_metrics       = GROUP_READS_BY_UMI.out.group_metrics
     iv_list             = BED_TO_INTERVAL_LIST.out.interval_list
     

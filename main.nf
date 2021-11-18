@@ -118,7 +118,6 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
     collect_hs_metrics_options:           modules['picard_hs_metrics'],
     error_rate_options:                   modules['fgbio_error_rate'],
     group_reads_mapping_options:          modules['group_reads_mapping'],
-//    fgbio_collect_duplex_seq_metrics:     modules['fgbio_collect_duplex_seq_metrics'],
     fgbio_sort_mapping_options:           modules['fgbio_sort_mapping'],
     fgbio_call_consensus_mapping_options: modules['fgbio_call_consensus_mapping'],
     fgbio_filter_mapping_options:         modules['fgbio_filter_mapping']
@@ -144,7 +143,6 @@ include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
 workflow {
     if ( params.stage != 'two' ) {
-//        TRIMGALORE_WF(input_samples)
         UMI_STAGE_ONE(input_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
         filtered_bam = UMI_STAGE_ONE.out.filtered_bam
         }
@@ -153,7 +151,6 @@ workflow {
     if ( params.stage != 'two' ) {
         UMI_QC(
             input_samples,
-//            TRIMGALORE_WF.out.trim_qc,
             multiqc_config,
             multiqc_custom_config,
             workflow_summary,
@@ -161,7 +158,6 @@ workflow {
             UMI_STAGE_TWO.out.md_hs_metrics,
             UMI_STAGE_ONE.out.error_rate,
             UMI_STAGE_ONE.out.group_metrics,
-			UMI_STAGE_ONE.out.duplex_seq_metrics,
             UMI_STAGE_TWO.out.md_report,
             UMI_STAGE_TWO.out.error_rate_2
             )
