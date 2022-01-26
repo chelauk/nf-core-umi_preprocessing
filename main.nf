@@ -161,7 +161,6 @@ workflow {
             UMI_STAGE_ONE.out.group_metrics,
             UMI_STAGE_TWO.out.md_report,
             UMI_STAGE_TWO.out.error_rate_2,
-            UMI_STAGE_TWO.out.hs_metrics_2,
             UMI_STAGE_TWO.out.bamqc_out
             )
         }

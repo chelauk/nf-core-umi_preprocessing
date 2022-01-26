@@ -61,5 +61,5 @@ workflow UMI_STAGE_TWO {
     error_rate_2  = ERRORRATE_BY_READ_POSITION.out
     md_hs_metrics = PICARD_COLLECT_HS_METRICS_2.out.md_hs_metrics
     md_report     = MARK_DUPLICATES.out.report
-
+    bamqc_out     = QUALIMAP_BAMQC.out.results
 }
