@@ -1,5 +1,5 @@
 /*
- * This file holds several functions used to perform operation in Sarek
+ * This file holds several functions used to perform operation in umi
  */
  
 // Check if a row has the expected number of item
@@ -22,68 +22,6 @@ def check_parameter_list(list, realList) {
     return list.every{ check_parameter_existence(it, realList) }
 }
 
-// Define list of available tools to annotate
-def define_anno_list() {
-    return [
-        'haplotypecaller',
-        'manta',
-        'mutect2',
-        'strelka',
-        'tiddit'
-    ]
-}
-
-// Define list of skipable QC tools
-def define_skip_qc_list() {
-    return [
-        'bamqc',
-        'baserecalibrator',
-        'bcftools',
-        'documentation',
-        'fastqc',
-        'markduplicates',
-        'multiqc',
-        'samtools',
-        'sentieon',
-        'vcftools',
-        'versions'
-    ]
-}
-
-// Define list of available step
-def define_step_list() {
-    return [
-        'annotate',
-        'controlfreec',
-        'mapping',
-        'preparerecalibration',
-        'recalibrate',
-        'variantcalling'
-    ]
-}
-
-// Define list of available tools
-def define_tool_list() {
-    return [
-        'ascat',
-        'cnvkit',
-        'controlfreec',
-        'dnascope',
-        'dnaseq',
-        'freebayes',
-        'haplotypecaller',
-        'manta',
-        'merge',
-        'mpileup',
-        'mutect2',
-        'snpeff',
-        'strelka',
-        'tiddit',
-        'tnscope',
-        'vep',
-        'msisensor'
-    ]
-}
 
 // Channeling the TSV file containing BAM.
 // Format is: "patient gender status sample bam bai"
@@ -102,33 +40,6 @@ def extract_bam(tsvFile) {
             if (!has_extension(bam, "bam")) exit 1, "File: ${bam} has the wrong extension. See --help for more information"
             return [meta, bam]
         }
-}
-
-// Create a channel of germline FASTQs from a directory pattern: "my_samples/*/"
-// All FASTQ files in subdirectories are collected and emitted;
-// they must have _R1_ and _R2_ in their names.
-// All FASTQ files are assumed to be from the same sample.
-def extract_fastq_from_dir(folder) {
-    sample = file(folder).getFileName().toString()
-
-    fastq = Channel.fromFilePairs(folder + '/*{_R1_,_R2_}*.fastq.gz')
-        .ifEmpty { error "No directories found matching folder '${folder}'" }
-
-// TODO check if flowcellLane_from_fastq is useful or not
-
-    fastq = fastq.map{ run, pair ->
-        def meta = [:]
-        meta.patient = sample
-        meta.sample  = meta.patient
-        meta.gender  = 'ZZ' // unused
-        meta.status  = 0    // normal (not tumor)
-        meta.run     = run
-        meta.id      = "${meta.patient}_${meta.sample}"
-        def read1    = pair[0]
-        def read2    = pair[1]
-
-        return [meta, [read1, read2]]
-    }
 }
 
 // Channeling the TSV file containing FASTQ or BAM
@@ -161,24 +72,6 @@ def extract_fastq(tsvFile) {
     }
 }
 
-// // Channeling the TSV file containing mpileup
-// // Format is: "patient gender status sample pileup"
-// def extract_pileup(tsvFile) {
-//     Channel.from(tsvFile)
-//         .splitCsv(sep: '\t')
-//         .map { row ->
-//             check_number_of_item(row, 5)
-//             def idPatient = row[0]
-//             def gender    = row[1]
-//             def status    = return_status(row[2].toInteger())
-//             def idSample  = row[3]
-//             def mpileup   = return_file(row[4])
-
-//             if (!has_extension(mpileup, "pileup")) exit 1, "File: ${mpileup} has the wrong extension. See --help for more information"
-
-//             return [idPatient, gender, status, idSample, mpileup]
-//         }
-// }
 
 // Channeling the TSV file containing Recalibration Tables.
 // Format is: "patient gender status sample bam bai recalTable"
@@ -193,7 +86,7 @@ def extract_recal(tsvFile) {
             meta.gender  = row[1]
             meta.status  = return_status(row[2].toInteger())
             meta.sample  = row[3]
-            meta.id      = meta.sample
+            meta.id      = "${meta.patient}_${meta.sample}"
             def bam      = return_file(row[4])
             def bai      = return_file(row[5])
             def table    = return_file(row[6])
@@ -206,32 +99,7 @@ def extract_recal(tsvFile) {
         }
 }
 
-// // Parse first line of a FASTQ file, return the flowcell id and lane number.
-// def flowcellLane_from_fastq(path) {
-//     // expected format:
-//     // xx:yy:FLOWCELLID:LANE:... (seven fields)
-//     // or
-//     // FLOWCELLID:LANE:xx:... (five fields)
-//     InputStream fileStream = new FileInputStream(path.toFile())
-//     InputStream gzipStream = new java.util.zip.GZIPInputStream(fileStream)
-//     Reader decoder = new InputStreamReader(gzipStream, 'ASCII')
-//     BufferedReader buffered = new BufferedReader(decoder)
-//     def line = buffered.readLine()
-//     assert line.startsWith('@')
-//     line = line.substring(1)
-//     def fields = line.split(' ')[0].split(':')
-//     String fcid
-//     int lane
-//     if (fields.size() == 7) {
-//         // CASAVA 1.8+ format
-//         fcid = fields[2]
-//         lane = fields[3].toInteger()
-//     } else if (fields.size() == 5) {
-//         fcid = fields[0]
-//         lane = fields[1].toInteger()
-//     }
-//     [fcid, lane]
-// }
+
 
 // Check file extension
 def has_extension(it, extension) {

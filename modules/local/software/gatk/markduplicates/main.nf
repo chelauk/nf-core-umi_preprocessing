@@ -25,7 +25,7 @@ process MARK_DUPLICATES {
 
     script:
     markdup_java_options = task.memory.toGiga() < 8 ? params.markdup_java_options : "\"-Xms" +  (task.memory.toGiga() / 2).trunc() + "g -Xmx" + (task.memory.toGiga() - 1) + "g\""
-    metrics = "-M ${meta.patient}_${meta.sample}.bam.metrics"
+    metrics = "-M ${meta.patient}_${meta.sample}.md.bam.metrics"
 
     if (params.no_gatk_spark)
     """
@@ -33,7 +33,7 @@ process MARK_DUPLICATES {
         MarkDuplicates \\
         --MAX_RECORDS_IN_RAM 50000 \\
         --INPUT $bam \\
-        --METRICS_FILE ${meta.patient}_${meta.sample}.bam.metrics \\
+        --METRICS_FILE ${meta.patient}_${meta.sample}.md.bam.metrics \\
         --TMP_DIR . \\
         --ASSUME_SORT_ORDER coordinate \\
         --CREATE_INDEX true \\
@@ -53,8 +53,8 @@ process MARK_DUPLICATES {
     """
     stub:
     """
-    touch ${meta.patient}_${meta.sample}.bam
-    touch ${meta.patient}_${meta.sample}.bai
+    touch ${meta.patient}_${meta.sample}.md.bam
+    touch ${meta.patient}_${meta.sample}.md.bam.bai
     touch ${meta.patient}_${meta.sample}.bam.metrics
     """
 

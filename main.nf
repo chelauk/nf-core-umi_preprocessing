@@ -101,14 +101,16 @@ if (bam_tsv_path) {
 workflow_summary = Schema.params_summary_multiqc(workflow, summary_params)
 workflow_summary = Channel.value(workflow_summary)
 
-include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf/trimgalore_wf' addParams (
-    trimgalore_options:                   modules['trimgalore'],
-    trim_umi_options:                     modules['trim_umi']
-	)
+//include { TRIMGALORE_WF } from './modules/local/subworkflow/trimgalore_wf/trimgalore_wf' addParams (
+//    trimgalore_options:                   modules['trimgalore'],
+//    trim_umi_options:                     modules['trim_umi']
+//	)
+
 include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_stage_one' addParams(
     bed_to_intervals_options:             modules['bed_to_intervals'],
     bwamem1_mem_options:                  modules['bwa_mem1_mem'],
     fastq_to_bam_options:                 modules['fastq_to_bam_mapping'],
+    estimate_complexity_options:          modules['estimate_complexity'],
     mark_adapters_options:                modules['mark_illumina_adapters_mapping'],
     bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
@@ -134,15 +136,15 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
 )
 
 include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'                addParams(
-    fastqc_options:                       modules['fastqc']
+    fastqc_options:                       modules['fastqc'],
+	multiqc_options:                      modules['multiqc']
 )
 
 include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
 workflow {
     if ( params.stage != 'two' ) {
-        TRIMGALORE_WF(input_samples)
-        UMI_STAGE_ONE(TRIMGALORE_WF.out.trimmed_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+        UMI_STAGE_ONE(input_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
         filtered_bam = UMI_STAGE_ONE.out.filtered_bam
         }
     if ( params.stage == 'two' ) { filtered_bam = input_samples }
@@ -150,7 +152,6 @@ workflow {
     if ( params.stage != 'two' ) {
         UMI_QC(
             input_samples,
-            TRIMGALORE_WF.out.trim_qc,
             multiqc_config,
             multiqc_custom_config,
             workflow_summary,
