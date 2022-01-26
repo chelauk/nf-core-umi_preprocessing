@@ -19,7 +19,7 @@ workflow UMI_QC {
     md_hs_metrics
     error_rate
     group_metrics
-    duplex_seq_metrics
+    //duplex_seq_metrics
     md_report
     error_rate_2
     hs_metrics_2
@@ -34,7 +34,7 @@ workflow UMI_QC {
             hs_metrics.collect{it[1]}.ifEmpty([]),
             md_hs_metrics.collect{it[1]}.ifEmpty([]),
             group_metrics.collect{it[1]}.ifEmpty([]),
-            duplex_seq_metrics.collect{it[1]}.ifEmpty([]),
+//            duplex_seq_metrics.collect{it[1]}.ifEmpty([]),
             md_report.collect{it[1]}.ifEmpty([]),
             error_rate.collect{it[1]}.ifEmpty([]),
             error_rate_2.collect{it[1]}.ifEmpty([]),
