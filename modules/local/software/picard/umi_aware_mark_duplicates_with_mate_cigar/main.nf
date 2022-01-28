@@ -5,7 +5,7 @@ params.options = [:]
 def options    = initOptions(params.options)
 
 process PICARD_UMI_AWARE_MARKDUPLICATES_WITH_MATE_CIGAR {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -15,21 +15,23 @@ process PICARD_UMI_AWARE_MARKDUPLICATES_WITH_MATE_CIGAR {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/picard:2.26.2--hdfd78af_0"
     } else {
-        container "quay.io/biocontainers/YOUR-TOOL-HERE"
+        container "quay.io/picard:2.26.2--hdfd78af_0"
     }
 
     input:
     tuple val(meta), path(bam)
 
     output:
-    tuple val(meta), path("*.txt"), emit: umi_aware_metrics
-    path "*.version.txt"          , emit: version
-    
+    tuple val(meta), path("*bam"),      emit: md_bam
+    tuple val(meta), path("*bai"),      emit: md_bai
+    val (meta),                         emit: tsv
+    tuple val(meta), path("*.metrics"), emit: report 
+
     script:
     def software = getSoftwareName(task.process)
     def avail_mem = 3
     if (!task.memory) {
-        log.info '[picard EstimateLibraryComplexity] Available memory not known - defaulting to 3GB. Specify process memory requirements to change this.'
+        log.info '[picard UmiAwareMarkDuplicatesWithMateCigar] Available memory not known - defaulting to 3GB. Specify process memory requirements to change this.'
     } else {
         avail_mem = task.memory.giga
     }
@@ -39,8 +41,9 @@ process PICARD_UMI_AWARE_MARKDUPLICATES_WITH_MATE_CIGAR {
     UmiAwareMarkDuplicatesWithMateCigar \\
     --INPUT  $bam \\
     --OUTPUT ${prefix}_umi_aware_md.bam \\
-    --METRICS ${prefix}_duplicate_metrics.txt \\
-    --UMI_METRICS ${prefix}_umi_metrics.txt
+    --METRICS ${prefix}_duplicate.metrics \\
+    --UMI_METRICS ${prefix}_umi.metrics \\
+    --CREATE_INDEX true
     echo \$(picard UmiAwareMarkDuplicatesWithMateCigar --version 2>&1) | sed 's/^.*Version://' > ${software}.version.txt
     """
     
@@ -49,8 +52,9 @@ process PICARD_UMI_AWARE_MARKDUPLICATES_WITH_MATE_CIGAR {
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
     touch ${prefix}_umi_aware_md.bam
-    touch ${prefix}_duplicate_metrics.txt
-    touch ${prefix}_umi_metrics.txt
+    touch ${prefix}_umi_aware_md.bam.bai
+    touch ${prefix}_duplicate.metrics
+    touch ${prefix}_umi.metrics
 
     echo 2.6.2 > ${software}.version.txt
     """
