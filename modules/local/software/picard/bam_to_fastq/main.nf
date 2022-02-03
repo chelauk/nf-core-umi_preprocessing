@@ -5,10 +5,9 @@ params.options = [:]
 def options    = initOptions(params.options)
 
 process BAM_TO_FASTQ {
-    scratch true
 	tag "$meta.id"
-    label 'process_max'
-    publishDir "${params.outdir}",
+    
+	publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
@@ -26,7 +25,7 @@ process BAM_TO_FASTQ {
     mkdir tmp_dir
     picard -Xmx${task.memory.toGiga()}g \\
 	SamToFastq \\
-    MAX_RECORDS_IN_RAM=500000 \\
+    MAX_RECORDS_IN_RAM=250000 \\
     TMP_DIR=./tmp_dir \\
 	INPUT=$bam \\
     FASTQ="${meta.id}.fastq.gz" \\
