@@ -27,7 +27,7 @@ process PICARD_SORT_BAM {
     picard -Xmx${task.memory.toGiga()}g SortSam \\
     MAX_RECORDS_IN_RAM=4000000 \\
     SORT_ORDER=queryname \\
-    INPUT=$bam \\
+    INPUT=${bam[0]} \\
     OUTPUT=${meta.id}_sort.bam \\
     VALIDATION_STRINGENCY=LENIENT
     ${picard_opts}
