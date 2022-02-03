@@ -39,7 +39,8 @@ def extract_bam(tsvFile) {
             def bam      = return_file(row[4])
             def bai      = return_file(row[5])
             if (!has_extension(bam, "bam")) exit 1, "File: ${bam} has the wrong extension. See --help for more information"
-            return [meta, bam, ]
+            if (!has_extension(bai, "bai")) exit 1, "File: ${bai} has the wrong extension. See --help for more information"
+            return [meta, bam, bai]
         }
 }
 
