@@ -2,6 +2,7 @@
  * A rule of thumb for reads of ~100bp is to set MAX_RECORDS_IN_RAM to be 250,000 
  * reads per each GB given to the -Xmx parameter for SortSam. 
  * Thanks to Keiran Raine for performing the experiments to arrive at these numbers.
+ * I am going for 100,000
  */
 // Import generic module functions
 include { initOptions; saveFiles; getSoftwareName } from '../../../../nf-core/software/functions'
@@ -10,7 +11,7 @@ def options    = initOptions(params.options)
 
 process PICARD_SORT_BAM {
     tag "$meta.id"
-    label 'process_high'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
@@ -28,7 +29,7 @@ process PICARD_SORT_BAM {
 
     script:
     picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
-    max_records = ${task.memory.toGiga()} * 250000 
+    max_records = task.memory.toGiga() * 100000
     """
     mkdir tmpdir
     picard -Xmx${task.memory.toGiga()}g SortSam \\

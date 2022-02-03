@@ -6,7 +6,7 @@ def options    = initOptions(params.options)
 
 process BAM_TO_FASTQ {
 	tag "$meta.id"
-    label 'process_max'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
@@ -21,7 +21,7 @@ process BAM_TO_FASTQ {
     tuple val(meta), file("*fastq.gz"), emit: fastq
 
     script:
-    max_records = ${task.memory.toGiga()} * 250000
+    max_records = task.memory.toGiga() * 100000
     """
     mkdir tmp_dir
     picard -Xmx${task.memory.toGiga()}g \\
