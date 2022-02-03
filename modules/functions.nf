@@ -29,7 +29,7 @@ def extract_bam(tsvFile) {
     Channel.from(tsvFile)
         .splitCsv(sep: '\t')
         .map { row ->
-            check_number_of_item(row, 5)
+            check_number_of_item(row, 6)
             def meta = [:]
             meta.patient = row[0]
             meta.gender  = row[1]
@@ -68,7 +68,7 @@ def extract_fastq(tsvFile) {
             if (!has_extension(read2, "fastq.gz") && !has_extension(read2, "fq.gz")  && !has_extension(read2, "fastq") && !has_extension(read2, "fq")) exit 1, "File: ${file2} has the wrong extension. See --help for more information"
         }
         else if (has_extension(read1, "bam")) check_number_of_item(row, 6)
-        else exit 1, "No recognisable extention for input file: ${read1}"
+        else exit 1, "No recognisable extension for input file: ${read1}"
 
         return [meta, [read1, read2, read3]]
     }
