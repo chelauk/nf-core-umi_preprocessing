@@ -29,7 +29,7 @@ process MARK_DUPLICATES {
 
     if (params.no_gatk_spark)
     """
-    gatk --java-options \\
+    gatk --java-options ${markdup_java_options} \\
         MarkDuplicates \\
         --MAX_RECORDS_IN_RAM 50000 \\
         --INPUT $bam \\
