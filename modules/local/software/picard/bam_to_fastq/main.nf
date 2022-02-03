@@ -5,7 +5,6 @@ params.options = [:]
 def options    = initOptions(params.options)
 
 process BAM_TO_FASTQ {
-    scratch true
 	tag "$meta.id"
     label 'process_max'
     publishDir "${params.outdir}",
