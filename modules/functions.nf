@@ -4,7 +4,9 @@
  
 // Check if a row has the expected number of item
 def check_number_of_item(row, number) {
-    if (row.size() != number) exit 1, "Malformed row in TSV file: ${row}, see --help for more information"
+    rowsize = row.size()
+    if (row.size() != number) exit 1, "Malformed row in TSV file: you should have ${rowsize} items,\n
+    and you have ${number} items, see --help for more information"
     return true
 }
 
