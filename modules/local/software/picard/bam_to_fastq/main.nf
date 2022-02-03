@@ -27,7 +27,7 @@ process BAM_TO_FASTQ {
 	SamToFastq \\
     MAX_RECORDS_IN_RAM=500000 \\
     TMP_DIR=./tmp_dir \\
-	INPUT=${bam[0]} \\
+	INPUT=$bam \\
     FASTQ="${meta.id}.fastq.gz" \\
     CLIPPING_ATTRIBUTE=XT \\
     CLIPPING_ACTION=2 \\

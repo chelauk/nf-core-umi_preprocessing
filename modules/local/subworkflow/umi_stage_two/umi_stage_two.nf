@@ -26,10 +26,10 @@ take:
 
 main:
     BED_TO_INTERVAL_LIST(target_bed, dict)
-    BAM_TO_FASTQ(filtered_bam)
+    SORT_BAM_TWO(filtered_bam,fasta,dict)
+    BAM_TO_FASTQ(SORT_BAM_TWO.out)
     BWA_ALN(BAM_TO_FASTQ.out,bwa_index,fasta,fasta_fai)
     PICARD_SORT_BAM(BWA_ALN.out.bam,fasta,dict)
-    SORT_BAM_TWO(filtered_bam,fasta,dict)
     PICARD_MERGE_BAMS(PICARD_SORT_BAM.out.join(SORT_BAM_TWO.out),fasta,dict)
     //MARK_DUPLICATES(PICARD_MERGE_BAMS.out.merged_bam)
     PICARD_UMI_AWARE_MARKDUPLICATES_WITH_MATE_CIGAR(PICARD_MERGE_BAMS.out.merged_bam)
