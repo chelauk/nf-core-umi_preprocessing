@@ -28,7 +28,7 @@ process PICARD_SORT_BAM {
 
     script:
     picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
-    max_records = ${task.memory.toGiga() * 250000 
+    max_records = ${task.memory.toGiga()} * 250000 
     """
     mkdir tmpdir
     picard -Xmx${task.memory.toGiga()}g SortSam \\
