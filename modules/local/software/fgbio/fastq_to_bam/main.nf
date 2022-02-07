@@ -10,9 +10,12 @@ process FASTQ_TO_BAM {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
-
-    conda     (params.enable_conda ? "bioconda::fgbio=1.3.0" : null)
-//    container "quay.io/biocontainers/fgbio:1.3.0--0"
+    conda (params.enable_conda ? "bioconda::fgbio=1.5.0" : null)
+    if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
+        container "https://depot.galaxyproject.org/singularity/fgbio:1.5.0--hdfd78af_0"
+    } else {
+        container "quay.io/biocontainers/fgbio:1.5.0--hdfd78af_0"
+    }
 
     input:
     tuple val(meta), path(reads)
@@ -25,7 +28,8 @@ process FASTQ_TO_BAM {
     script:
     """  
     mkdir temp
-    fgbio -Xmx${task.memory.toGiga()}g --tmp-dir=./temp FastqToBam \\
+    fgbio -Xmx${task.memory.toGiga()}g -XX:+AggressiveOpts -XX:+AggressiveHeap \\ 
+    --tmp-dir=./temp FastqToBam \\
     --input $reads \\
     --output ${meta.id}_unaln.bam \\
     --sort true \\
