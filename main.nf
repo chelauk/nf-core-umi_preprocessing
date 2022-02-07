@@ -129,7 +129,7 @@ include { UMI_STAGE_TWO } from './modules/local/subworkflow/umi_stage_two/umi_st
     bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
     picard_sort_mapping_options:          modules['picard_sort_bams_mapping'],
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
-//    gatk_mark_duplicates_options:         modules['markduplicates'],
+    sambamba_sort_options:                modules['sambamba_sort'],
     collect_umi_metrics_options:          modules['umi_aware_mark_duplicates'],
     qualimap_bamqc_mapping_options:       modules['qualimap_bamqc_mapping'],
     collect_hs_metrics_options:           modules['picard_hs_metrics'],
