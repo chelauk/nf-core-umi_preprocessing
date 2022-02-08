@@ -28,7 +28,7 @@ process FASTQ_TO_BAM {
     script:
     """  
     mkdir temp
-    fgbio -Xmx${task.memory.toGiga()}g -XX:+AggressiveOpts -XX:+AggressiveHeap \\ 
+    fgbio -Xmx${task.memory.toGiga()}g -XX:+AggressiveOpts -XX:+AggressiveHeap \\
     --tmp-dir=./temp FastqToBam \\
     --input $reads \\
     --output ${meta.id}_unaln.bam \\
