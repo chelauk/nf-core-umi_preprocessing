@@ -28,8 +28,8 @@ process PICARD_SORT_BAM {
     tuple val(meta), file("*sort*.bam")
 
     script:
-    picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
-    max_records = task.memory.toGiga() * 100000
+    def picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
+    def max_records = task.memory.toGiga() * 100000
     """
     mkdir tmpdir
     picard -Xmx${task.memory.toGiga()}g SortSam \\

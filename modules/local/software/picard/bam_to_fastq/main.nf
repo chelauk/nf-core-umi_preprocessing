@@ -21,7 +21,7 @@ process BAM_TO_FASTQ {
     tuple val(meta), file("*fastq.gz"), emit: fastq
 
     script:
-    max_records = task.memory.toGiga() * 100000
+    def = task.memory.toGiga() * 100000
     """
     mkdir tmp_dir
     picard -Xmx${task.memory.toGiga()}g \\

@@ -5,7 +5,7 @@ def options    = initOptions(params.options)
 
 process MARK_DUPLICATES {
     tag "${meta.id}"
-    label 'process_high'
+    label 'process_medium'
 
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -28,10 +28,11 @@ process MARK_DUPLICATES {
     metrics = "-M ${meta.patient}_${meta.sample}.md.bam.metrics"
 
     if (params.no_gatk_spark)
+    def max_records = task.memory.toGiga() * 100000
     """
     gatk --java-options ${markdup_java_options} \\
         MarkDuplicates \\
-        --MAX_RECORDS_IN_RAM 50000 \\
+        --MAX_RECORDS_IN_RAM ${max_records} \\
         --INPUT $bam \\
         --METRICS_FILE ${meta.patient}_${meta.sample}.md.bam.metrics \\
         --TMP_DIR . \\
