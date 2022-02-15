@@ -31,7 +31,7 @@ process PICARD_SORT_BAM {
     def picard_opts = params.second_file ? "mv ${meta.id}_sort.bam ${meta.id}_sort_2.bam" : ""
     def max_records = task.memory.toGiga() * 100000
     """
-    mkdir tmpdir
+    [ ! -d "./tmpdir ] && mkdir ./tmpdir || echo "./tmpdir exists"
     picard -Xmx${task.memory.toGiga()}g SortSam \\
     MAX_RECORDS_IN_RAM=${max_records} \\
     SORT_ORDER=queryname \\

@@ -27,9 +27,9 @@ process FASTQ_TO_BAM {
 
     script:
     """  
-    mkdir temp
+    [ ! "./tmpdir" ] && mkdir tmpdir || echo "./tmpdir exists"
     fgbio -Xmx${task.memory.toGiga()}g -XX:+AggressiveOpts -XX:+AggressiveHeap \\
-    --tmp-dir=./temp FastqToBam \\
+    --tmp-dir=./tmpdir FastqToBam \\
     --input $reads \\
     --output ${meta.id}_unaln.bam \\
     --sort true \\
