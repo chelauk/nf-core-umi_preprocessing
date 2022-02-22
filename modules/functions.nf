@@ -4,7 +4,8 @@
  
 // Check if a row has the expected number of item
 def check_number_of_item(row, number) {
-    if (row.size() != number) exit 1, "Malformed row in TSV file: ${row}, see --help for more information"
+    rowsize = row.size()
+    if (row.size() != number) exit 1, "Malformed row in TSV file: you should have ${number} items you have ${rowsize} items, see --help for more information"
     return true
 }
 
@@ -29,7 +30,7 @@ def extract_bam(tsvFile) {
     Channel.from(tsvFile)
         .splitCsv(sep: '\t')
         .map { row ->
-            check_number_of_item(row, 5)
+            check_number_of_item(row, 6)
             def meta = [:]
             meta.patient = row[0]
             meta.gender  = row[1]
@@ -37,8 +38,10 @@ def extract_bam(tsvFile) {
             meta.sample  = row[3]
             meta.id      = "${meta.patient}_${meta.sample}"
             def bam      = return_file(row[4])
+            def bai      = return_file(row[5])
             if (!has_extension(bam, "bam")) exit 1, "File: ${bam} has the wrong extension. See --help for more information"
-            return [meta, bam]
+            if (!has_extension(bai, "bai")) exit 1, "File: ${bai} has the wrong extension. See --help for more information"
+            return [meta, [bam, bai]]
         }
 }
 
@@ -66,7 +69,7 @@ def extract_fastq(tsvFile) {
             if (!has_extension(read2, "fastq.gz") && !has_extension(read2, "fq.gz")  && !has_extension(read2, "fastq") && !has_extension(read2, "fq")) exit 1, "File: ${file2} has the wrong extension. See --help for more information"
         }
         else if (has_extension(read1, "bam")) check_number_of_item(row, 6)
-        else exit 1, "No recognisable extention for input file: ${read1}"
+        else exit 1, "No recognisable extension for input file: ${read1}"
 
         return [meta, [read1, read2, read3]]
     }

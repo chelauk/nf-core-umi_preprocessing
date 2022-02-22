@@ -41,8 +41,9 @@ process PICARD_UMI_AWARE_MARKDUPLICATES_WITH_MATE_CIGAR {
     UmiAwareMarkDuplicatesWithMateCigar \\
     --INPUT  $bam \\
     --OUTPUT ${prefix}_umi_aware_md.bam \\
-    --METRICS ${prefix}_duplicate.metrics \\
-    --UMI_METRICS ${prefix}_umi.metrics \\
+    --ASSUME_SORT_ORDER  coordinate \\
+    --METRICS_FILE ${prefix}_duplicate.metrics \\
+    --UMI_METRICS_FILE ${prefix}_umi.metrics \\
     --CREATE_INDEX true
     echo \$(picard UmiAwareMarkDuplicatesWithMateCigar --version 2>&1) | sed 's/^.*Version://' > ${software}.version.txt
     """

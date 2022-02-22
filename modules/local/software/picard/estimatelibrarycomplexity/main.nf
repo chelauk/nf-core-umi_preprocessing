@@ -6,7 +6,7 @@ def options    = initOptions(params.options)
 
 process PICARD_ESTIMATELIBRARYCOMPLEXITY {
     tag "$meta.id"
-    label 'process_high'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
@@ -34,9 +34,11 @@ process PICARD_ESTIMATELIBRARYCOMPLEXITY {
         avail_mem = task.memory.giga
     }
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def max_records = task.memory.toGiga() * 100000
     """
     picard -Xmx${avail_mem}g \\
     EstimateLibraryComplexity \\
+    --MAX_RECORDS_IN_RAM ${max_records} \\
     --INPUT  $bam \\
     --BARCODE_TAG RX \\
     --OUTPUT ${prefix}.library_complexity.txt 

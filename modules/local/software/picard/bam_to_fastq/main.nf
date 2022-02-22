@@ -6,8 +6,8 @@ def options    = initOptions(params.options)
 
 process BAM_TO_FASTQ {
 	tag "$meta.id"
-    
-	publishDir "${params.outdir}",
+    label 'process_medium'
+    publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
@@ -21,12 +21,13 @@ process BAM_TO_FASTQ {
     tuple val(meta), file("*fastq.gz"), emit: fastq
 
     script:
+    def max_records = task.memory.toGiga() * 100000
     """
-    mkdir tmp_dir
+    [ ! -d "./tmpdir" ] && mkdir ./tmpdir || echo "./tmpdir exists"
     picard -Xmx${task.memory.toGiga()}g \\
 	SamToFastq \\
-    MAX_RECORDS_IN_RAM=250000 \\
-    TMP_DIR=./tmp_dir \\
+    MAX_RECORDS_IN_RAM=${max_records} \\
+    TMP_DIR=./tmpdir \\
 	INPUT=$bam \\
     FASTQ="${meta.id}.fastq.gz" \\
     CLIPPING_ATTRIBUTE=XT \\

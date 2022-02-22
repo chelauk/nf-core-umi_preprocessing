@@ -24,6 +24,7 @@ process PICARD_MERGE_BAMS {
     path  "*.version.txt"               , emit: version
 
     script:
+    def max_records = task.memory.toGiga() * 100000
     def software  = getSoftwareName(task.process)
     def prefix    = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     def avail_mem = 3
@@ -34,7 +35,7 @@ process PICARD_MERGE_BAMS {
     }
     """
     picard -Xmx${avail_mem}g MergeBamAlignment \\
-    MAX_RECORDS_IN_RAM=4000000 \\
+    MAX_RECORDS_IN_RAM=${max_records} \\
     R=$fasta \\
     ${options.args} \\
     UNMAPPED_BAM=${unaligned_marked_bam} \\

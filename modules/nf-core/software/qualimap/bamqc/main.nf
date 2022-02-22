@@ -42,8 +42,8 @@ process QUALIMAP_BAMQC {
     }
     """
     unset DISPLAY
-    mkdir tmp
-    export _JAVA_OPTIONS=-Djava.io.tmpdir=./tmp
+    [ ! -d "./tmpdir" ] && mkdir ./tmpdir || echo "./tmpdir exists"
+    export _JAVA_OPTIONS=-Djava.io.tmpdir=./tmpdir
     qualimap \\
         --java-mem-size=$memory \\
         bamqc \\

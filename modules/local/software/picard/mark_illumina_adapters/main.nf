@@ -5,7 +5,7 @@ def options    = initOptions(params.options)
 
 process MARK_ILLUMINA_ADAPTERS {
     tag "{$meta.id}"
-    label 'process_high'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
@@ -21,9 +21,10 @@ process MARK_ILLUMINA_ADAPTERS {
     tuple val(meta), file("*_mark_adapter.metrics"), emit: mark_adaptor_log
 
     script:
+    def max_records = task.memory.toGiga() * 100000
     """
     picard -Xmx${task.memory.toGiga()}g  MarkIlluminaAdapters \\
-    MAX_RECORDS_IN_RAM=4000000 \\
+    MAX_RECORDS_IN_RAM=${max_records} \\
     INPUT=$bam \\
     OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
     METRICS="${meta.id}_mark_adapter.metrics"
