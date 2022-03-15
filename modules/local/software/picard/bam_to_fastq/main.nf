@@ -22,6 +22,7 @@ process BAM_TO_FASTQ {
 
     script:
     def max_records = task.memory.toGiga() * 100000
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
     [ ! -d "./tmpdir" ] && mkdir ./tmpdir || echo "./tmpdir exists"
     picard -Xmx${task.memory.toGiga()}g \\
@@ -36,7 +37,8 @@ process BAM_TO_FASTQ {
     NON_PF=true 
     """
     stub:
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
-    touch ${meta.id}.fastq.gz
+    touch ${prefix}.fastq.gz
     """
     }

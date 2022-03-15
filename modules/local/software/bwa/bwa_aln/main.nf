@@ -29,18 +29,20 @@ process BWA_ALN {
 
     script:
     def software   = getSoftwareName(task.process)
-    CN = params.sequencing_center ? "CN:${params.sequencing_center}\\t" : ""
+    def CN = params.sequencing_center ? "CN:${params.sequencing_center}\\t" : ""
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
     bwa mem \\
     ${options.args} \\
     -t ${task.cpus} \\
     ${fasta} ${reads} | \\
-    samtools sort --threads ${task.cpus} -m 2G -o ${meta.id}.bam
+    samtools sort --threads ${task.cpus} -m 2G -o ${prefix}.bam
     echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//' > ${software}.version.txt
     """
     stub:
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
-    touch ${meta.id}.bam
+    touch ${prefix}.bam
     touch bwa.version.txt
     """
     }

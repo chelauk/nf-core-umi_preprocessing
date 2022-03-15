@@ -22,17 +22,19 @@ process MARK_ILLUMINA_ADAPTERS {
 
     script:
     def max_records = task.memory.toGiga() * 100000
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
     picard -Xmx${task.memory.toGiga()}g  MarkIlluminaAdapters \\
     MAX_RECORDS_IN_RAM=${max_records} \\
     INPUT=$bam \\
-    OUTPUT="${meta.id}_unaln_umi_marked.bam" \\
-    METRICS="${meta.id}_mark_adapter.metrics"
+    OUTPUT="${prefix}_unaln_umi_marked.bam" \\
+    METRICS="${prefix}_mark_adapter.metrics"
     """
     stub:
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
-    touch ${meta.id}_unaln_umi_marked.bam
-    touch ${meta.id}_mark_adapter.metrics
+    touch ${prefix}_unaln_umi_marked.bam
+    touch ${prefix}_mark_adapter.metrics
 	"""
     }
 
