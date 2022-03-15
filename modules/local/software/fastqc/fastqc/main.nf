@@ -25,7 +25,7 @@ process FASTQC {
     script:
     // Add soft-links to original FastQs for consistent naming in pipeline
     def software = getSoftwareName(task.process)
-    def prefix   = options.suffix ? "${meta.patient}_${meta.id}.${options.suffix}" : "${meta.patient}_${meta.id}"
+	def prefix   = options.suffix ? "${meta.patient}_${meta.id}.${options.suffix}" : "${meta.patient}_${meta.id}_${meta.run}"
     if (meta.single_end) {
         """
         [ ! -f  ${prefix}.fastq.gz ] && ln -s $reads ${prefix}.fastq.gz
@@ -43,9 +43,10 @@ process FASTQC {
     }
 
     stub:
+	def prefix   = options.suffix ? "${meta.patient}_${meta.id}.${options.suffix}" : "${meta.patient}_${meta.id}_${meta.run}"
     """
-    touch fastq.html
-    touch test.zip
+    touch ${prefix}.html
+    touch ${prefix}.zip
     touch fastq.version.txt
     """
 }

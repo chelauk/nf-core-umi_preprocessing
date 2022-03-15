@@ -26,12 +26,16 @@ process FASTQ_TO_BAM {
     tuple val(meta), file("*bam"), emit: bam
 
     script:
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """  
-    mkdir temp
+    if [ ! -d temp ]
+    then
+        mkdir temp
+    fi
     fgbio -Xmx${task.memory.toGiga()}g -XX:+AggressiveOpts -XX:+AggressiveHeap \\
     --tmp-dir=./temp FastqToBam \\
     --input $reads \\
-    --output ${meta.id}_unaln.bam \\
+    --output ${prefix}_unaln.bam \\
     --sort true \\
     --read-structures $rstructure \\
     --umi-tag RX \\
@@ -39,7 +43,12 @@ process FASTQ_TO_BAM {
     --library $library
     """
     stub:
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
-    touch ${meta.id}_unaln.bam
+    if [ ! -d temp ]
+    then
+        mkdir temp
+    fi
+    touch ${prefix}_unaln.bam
     """
 }

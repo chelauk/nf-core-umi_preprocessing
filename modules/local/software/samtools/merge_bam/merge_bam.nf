@@ -18,16 +18,17 @@ process SAMTOOLS_MERGE_BAM {
         tuple val(meta), path(bam)
 
     output:
-        tuple val(meta), path("${name}.bam"), emit: bam
+        tuple val(meta), path("${meta.id}.bam"), emit: bam
 
     script:
-    name = options.suffix ? "${meta.id}.${options.suffix}" : "${meta.id}"
+    prefix = options.suffix ? "${options.suffix}" : "${meta.id}"
     """
     samtools merge --threads ${task.cpus} temp.bam ${bam}
-    samtools sort  --threads ${task.cpus} -o ${name}.bam  temp.bam
+    samtools sort  --threads ${task.cpus} -o ${prefix}.bam  temp.bam
     """
     stub:
+    prefix = options.suffix ? "${options.suffix}" : "${meta.id}"
     """
-    touch ${name}.bam
+    touch ${prefix}.bam
     """
 }

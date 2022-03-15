@@ -33,7 +33,7 @@ process PICARD_ESTIMATELIBRARYCOMPLEXITY {
     } else {
         avail_mem = task.memory.giga
     }
-    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     def max_records = task.memory.toGiga() * 100000
     """
     picard -Xmx${avail_mem}g \\
@@ -47,7 +47,7 @@ process PICARD_ESTIMATELIBRARYCOMPLEXITY {
     
     stub:
     def software = getSoftwareName(task.process)
-    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def prefix   = params.stage == "two" ? "${meta.id}" : "${meta.id}_${meta.run}"
     """
     touch ${prefix}.library_complexity.txt 
     echo 2.6.2 > ${software}.version.txt
