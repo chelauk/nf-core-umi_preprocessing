@@ -48,7 +48,11 @@ modules = params.modules
                                CHECKING REFERENCES
 ================================================================================
 */
-
+println("params.genome: " + params.genome )
+println("params.genomes: " + params.genomes )
+println("params.genomes[params.genome]: " + params.genomes[params.genome] )
+println("params.genomes['GRCh37'].bwa: " + params.genomes['GRCh37'].bwa )
+println("params.genomes_base: " + params.genomes_base)
 // Initialize each params in params.genomes, catch the command line first if it was defined
 params.bwa                     = params.genome ? params.genomes[params.genome].bwa         ?: false : false
 params.dbsnp                   = params.genome ? params.genomes[params.genome].dbsnp       ?: false : false
