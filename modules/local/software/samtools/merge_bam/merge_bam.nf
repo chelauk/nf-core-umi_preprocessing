@@ -8,7 +8,7 @@ environment = params.enable_conda ? "bioconda::samtools=1.10" : null
 
 process SAMTOOLS_MERGE_BAM {
     echo true
-    label 'CPUS_MAX'
+    label 'process_high'
     tag "${meta.id}"
 
     publishDir params.outdir, mode: params.publish_dir_mode,
