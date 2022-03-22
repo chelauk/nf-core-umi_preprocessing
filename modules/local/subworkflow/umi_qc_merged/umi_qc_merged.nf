@@ -27,9 +27,9 @@ workflow UMI_QC_MERGED {
             workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'),
             hs_metrics.collect{it[1]}.ifEmpty([]),
             md_hs_metrics.collect{it[1]}.ifEmpty([]),
+            error_rate.collect{it[1]}.ifEmpty([]),
             group_metrics.collect{it[1]}.ifEmpty([]),
             md_report.collect{it[1]}.ifEmpty([]),
-            error_rate.collect{it[1]}.ifEmpty([]),
             error_rate_2.collect{it[1]}.ifEmpty([]),
             bamqc_out.collect{it[1]}.ifEmpty([]))
     
