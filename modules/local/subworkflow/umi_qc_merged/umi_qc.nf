@@ -4,7 +4,6 @@
 ===================================
 */
 
-include { FASTQC }           from '../../software/fastqc/fastqc/main'            addParams(options: params.fastqc_options)
 include { MULTIQC }          from '../../software/multiqc/multiqc'               addParams(options: params.multiqc_options)
 
 qc_reports          = Channel.empty()
