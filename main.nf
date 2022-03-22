@@ -187,8 +187,7 @@ workflow {
             )
         }
     if ( params.stage == "merged") {
-        UMI_QC(
-            input_samples,
+        UMI_QC_MERGED(
             multiqc_config,
             multiqc_custom_config,
             workflow_summary,
