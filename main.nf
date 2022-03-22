@@ -160,7 +160,9 @@ include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'       
 
 include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
-include { UMI_QC_MERGED}   from './modules/local/subworkflow/umi_qc_merged/umi_qc.nf'
+include { UMI_QC_MERGED}   from './modules/local/subworkflow/umi_qc_merged/umi_qc_merged.nf'     addParams(
+	multiqc_options:                      modules['multiqc']
+)
 
 workflow {
     if (params.stage == 'merged') {
