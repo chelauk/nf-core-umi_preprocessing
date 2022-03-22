@@ -83,7 +83,7 @@ include {
 
 // Handle input
 tsv_path = null
-if (params.input && (has_extension(params.input, "tsv")) && (params.stage != "two") ) tsv_path = params.input
+if (params.input && (has_extension(params.input, "tsv")) && (params.stage != "two") && (params.stage != "merged") ) tsv_path = params.input
 if (tsv_path) {
     tsv_file = file(tsv_path)
     input_samples = extract_fastq(tsv_file)
@@ -95,6 +95,13 @@ if (params.input && (has_extension(params.input, "tsv")) && (params.stage == "tw
 if (bam_tsv_path) {
     bam_tsv_file = file(bam_tsv_path)
     input_samples = extract_bam(bam_tsv_file)
+    }
+// handle bam input for stage 2
+merged_tsv_path = null
+if (params.input && (has_extension(params.input, "tsv")) && (params.stage == "merged") ) merged_tsv_path = params.input
+if (merged_tsv_path) {
+    merged_tsv_file = file(merged_tsv_path)
+    input_samples = extract_bam(merged_tsv_file)
     }
 
 // params summary for MultiQC
@@ -115,6 +122,16 @@ include { UMI_STAGE_ONE } from './modules/local/subworkflow/umi_stage_one/umi_st
     bam_to_fastq_options:                 modules['bam_to_fastq_mapping'],
     picard_merge_bams_options:            modules['picard_merge_bams_mapping'],
     merge_runs_mapping_options:           modules['merge_runs_mapping'],
+    collect_hs_metrics_options:           modules['picard_hs_metrics'],
+    error_rate_options:                   modules['fgbio_error_rate'],
+    group_reads_mapping_options:          modules['group_reads_mapping'],
+    fgbio_sort_mapping_options:           modules['fgbio_sort_mapping'],
+    fgbio_call_consensus_mapping_options: modules['fgbio_call_consensus_mapping'],
+    fgbio_filter_mapping_options:         modules['fgbio_filter_mapping']
+)
+
+include { POST_MERGE } from './modules/local/subworkflow/post_merge/post_merge' addParams(
+    bed_to_intervals_options:             modules['bed_to_intervals'],
     collect_hs_metrics_options:           modules['picard_hs_metrics'],
     error_rate_options:                   modules['fgbio_error_rate'],
     group_reads_mapping_options:          modules['group_reads_mapping'],
@@ -144,13 +161,17 @@ include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'       
 include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
 workflow {
-    if ( params.stage != 'two' ) {
+    if (params.stage == 'merged') {
+        POST_MERGE (input_samples, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
+        filtered_bam = POST_MERGE.out.filtered_bam
+    }
+    if ( params.stage != 'two' && params.stage != 'merged' ) {
         UMI_STAGE_ONE(input_samples, library, read_structure, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
         filtered_bam = UMI_STAGE_ONE.out.filtered_bam
         }
     if ( params.stage == 'two' ) { filtered_bam = input_samples }
     UMI_STAGE_TWO(filtered_bam, bwa_index, fasta, fasta_fai,target_bed, dict, dbsnp, dbsnp_index)
-    if ( params.stage != 'two' ) {
+    if ( params.stage != 'two' && params.stage != "merged") {
         UMI_QC(
             input_samples,
             multiqc_config,
@@ -165,6 +186,21 @@ workflow {
             UMI_STAGE_TWO.out.bamqc_out
             )
         }
+    if ( params.stage == "merged") {
+        UMI_QC(
+            input_samples,
+            multiqc_config,
+            multiqc_custom_config,
+            workflow_summary,
+            POST_MERGE.out.hs_metrics,
+            UMI_STAGE_TWO.out.md_hs_metrics,
+            POST_MERGE.out.error_rate,
+            POST_MERGE.out.group_metrics,
+            UMI_STAGE_TWO.out.md_report,
+            UMI_STAGE_TWO.out.error_rate_2,
+            UMI_STAGE_TWO.out.bamqc_out
+        )
+    }
     if (params.stage == 'two') {
             UMI_QC_2(
             multiqc_config,
