@@ -160,6 +160,8 @@ include { UMI_QC }       from './modules/local/subworkflow/umi_qc/umi_qc'       
 
 include { UMI_QC_2 }       from './modules/local/subworkflow/umi_qc_2/umi_qc_2'
 
+include { UMI_QC_MERGED}   from './modules/local/subworkflow/umi_qc_merged/umi_qc.nf'
+
 workflow {
     if (params.stage == 'merged') {
         POST_MERGE (input_samples, bwa_index, fasta, fasta_fai, dict, min_reads, target_bed, dbsnp, dbsnp_index)
