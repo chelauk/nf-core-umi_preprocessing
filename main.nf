@@ -190,20 +190,20 @@ workflow {
             UMI_STAGE_TWO.out.bamqc_out
             )
         }
-    if ( params.stage == "merged") {
-        UMI_QC_MERGED(
-            multiqc_config,
-            multiqc_custom_config,
-            workflow_summary,
-            POST_MERGE.out.hs_metrics,
-            UMI_STAGE_TWO.out.md_hs_metrics,
-            POST_MERGE.out.error_rate,
-            POST_MERGE.out.group_metrics,
-            UMI_STAGE_TWO.out.md_report,
-            UMI_STAGE_TWO.out.error_rate_2,
-            UMI_STAGE_TWO.out.bamqc_out
-        )
-    }
+//    if ( params.stage == "merged") {
+//        UMI_QC_MERGED(
+//            multiqc_config,
+//            multiqc_custom_config,
+//            workflow_summary,
+//            POST_MERGE.out.hs_metrics,
+//            UMI_STAGE_TWO.out.md_hs_metrics,
+//            POST_MERGE.out.error_rate,
+//            POST_MERGE.out.group_metrics,
+//            UMI_STAGE_TWO.out.md_report,
+//            UMI_STAGE_TWO.out.error_rate_2,
+//            UMI_STAGE_TWO.out.bamqc_out
+//        )
+//    }
     if (params.stage == 'two') {
             UMI_QC_2(
             multiqc_config,
