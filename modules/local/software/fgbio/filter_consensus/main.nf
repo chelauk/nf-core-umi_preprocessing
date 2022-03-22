@@ -25,7 +25,7 @@ process FILTER_CONSENSUS {
     script:
     """
     fgbio -Xmx${task.memory.toGiga()}g FilterConsensusReads \\
-    -i ${bam} \\
+    -i ${meta.id}.bam \\
     -o ${meta.id}_cons_filt.bam \\
     -r ${fasta} \\
     --min-reads ${min_reads} \\

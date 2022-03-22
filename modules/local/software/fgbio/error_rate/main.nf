@@ -29,7 +29,7 @@ process ERRORRATE_BY_READ_POSITION {
     output_options = params.second_file ? "--output ${meta.patient}_${meta.sample}_st2_qc" : "--output ${meta.patient}_${meta.sample}_st1_qc"
     """
     fgbio -Xmx${task.memory.toGiga()}g ErrorRateByReadPosition \\
-    --input ${bam} \\
+    --input ${meta.id}.bam \\
     ${output_options} \\
     --intervals ${interval_list} \\
     --ref ${fasta} \\

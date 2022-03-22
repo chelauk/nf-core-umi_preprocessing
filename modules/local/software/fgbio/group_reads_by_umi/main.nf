@@ -24,10 +24,10 @@ process GROUP_READS_BY_UMI {
     script:
     """
     fgbio -Xmx${task.memory.toGiga()}g GroupReadsByUmi \\
-    -i ${bam} \\
-    -f ${meta.patient}_${meta.sample}_aln_merged_umi.metrics \\
+    -i ${meta.id}.bam \\
+    -f ${meta.id}_aln_merged_umi.metrics \\
     -s adjacency -m 30 -t RX -T MI --min-umi-length 9 \\
-    -o ${meta.patient}_${meta.sample}_umi_group.bam 
+    -o ${meta.id}_umi_group.bam 
     """
     stub:
     """

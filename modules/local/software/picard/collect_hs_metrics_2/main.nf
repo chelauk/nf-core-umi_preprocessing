@@ -40,7 +40,7 @@ process PICARD_COLLECT_HS_METRICS_2 {
     picard -Xmx${avail_mem}g CollectHsMetrics \\
     R=${fasta} \\
     ${options.args} \\
-    I=${bam} \\
+    I=${meta.id}.bam \\
     O=${meta.id}_md_hs_metrics.txt \\
     BAIT_INTERVALS=${interval_list} \\
     TARGET_INTERVALS=${interval_list} 
